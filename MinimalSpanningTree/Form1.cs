@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -27,24 +23,23 @@ namespace MinimalSpanningTree
         Brush b3;
 
 
-        public int[,] wsp_punktow;
-        Graf grafik;
+        Graph graph;
         int? zaznaczony;
         int? zaznaczony2;
-        List<Krawedz> spr;
+        List<Edge> spr;
         List<int> spr_wierzcholki;
         bool rysuj_animacje;
         Bitmap b1;
         int ilosc_wierzcholkow;
 
         string cykl_w_stringu;
-        bool siatka;
-        static int range_panelu;
+        bool drawGrid;
+        static int gridCellWidth;
         public Form1()
         {
             InitializeComponent();
 
-            spr = new List<Krawedz>();
+            spr = new List<Edge>();
             spr_wierzcholki = new List<int>();
 
             b1 = new Bitmap(panel1.Width, panel1.Height);
@@ -64,151 +59,37 @@ namespace MinimalSpanningTree
             g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             g.InterpolationMode = InterpolationMode.High;
 
-            range_panelu = panel1.Width / 10;
+            gridCellWidth = panel1.Width / 10;
 
 
         }
-        public void wyznacz_wspolrzedne_los()
-        {
-
-
-            wsp_punktow = new int[grafik.n, 2];
-
-            Random rnd = new Random();
-            for (int i = 0; i < grafik.n; i++)
-            {
-                int x = rnd.Next(10, panel1.Width - 15);
-                int y = rnd.Next(20, panel1.Height - 20);
-                wsp_punktow[i, 0] = x;
-                wsp_punktow[i, 1] = y;
-
-            }
-
-        }
-
-        public void wyznacz_wspolrzedne_kolo()
-        {
-
-
-            wsp_punktow = new int[grafik.n, 2];
-
-
-            int centrumx = panel1.Width / 2;
-            int centrumy = panel1.Height / 2;
-
-            int x = 0;
-            int y = 0;
-            int srednica = (panel1.Height / 3);
-            int i = 0;
-            for (double angle = 0.0f; angle <= (2.0f * Math.PI); angle += ((Math.PI * 2.0f) / grafik.n))
-            {
-                if (i == grafik.n) break;
-                x = Convert.ToInt32(srednica * Math.Sin(angle)) + centrumx;
-                y = Convert.ToInt32(srednica * Math.Cos(angle)) + centrumy;
-                wsp_punktow[i, 0] = x;
-                wsp_punktow[i, 1] = y;
-                i++;
-
-            }
-        }
-
-        public void wyznacz_wspolrzedne_siatka()
-        {
-
-            if (grafik.n > 80)
-            {
-                grafik = null;
-                MessageBox.Show("Rysujac na siatce podaj liczbe wierzchołków mniejszą od 80");
-                return;
-            }
-            wsp_punktow = new int[grafik.n, 2];
-
-            Random rnd = new Random();
-            for (int i = 0; i < grafik.n; i++)
-            {
-                int x = rnd.Next(1, 10);
-                int y = rnd.Next(1, 10);
-                bool bylo = false;
-                x = x * (panel1.Width / 10) - 5;
-                y = y * (panel1.Width / 10) - 5;
-                for (int j = 0; j < i; j++)
-                {
-
-                    if (x == wsp_punktow[j, 0] && y == wsp_punktow[j, 1])
-                    {
-                        i = i - 1;
-                        bylo = true;
-                        break;
-                    }
-
-                }
-
-                if (!bylo)
-                {
-                    wsp_punktow[i, 0] = x;
-                    wsp_punktow[i, 1] = y;
-                }
-
-            }
-
-        }
+       
 
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            //if (grafik == null) return;
             var x = new Task(() =>
             {
                 rysuj_bitmape();
                 e.Graphics.DrawImage(b1, 0, 0);
             });
-            //rysuj_bitmape();
-            //e.Graphics.DrawImage(b1, 0, 0);
             x.Start();
             Task.WaitAll(x);
-
         }
         public void rysuj_bitmape()
         {
 
             g.Clear(Color.White);
-            if (siatka)
+            if (drawGrid)
             {
                 for (int i = 1; i < 10; i++)
                 {
-                    g.DrawLine(p5, 0, i * range_panelu, panel1.Width, i * range_panelu);
-                    g.DrawLine(p5, i * range_panelu, 0, i * range_panelu, panel1.Height);
+                    g.DrawLine(p5, 0, i * gridCellWidth, panel1.Width, i * gridCellWidth);
+                    g.DrawLine(p5, i * gridCellWidth, 0, i * gridCellWidth, panel1.Height);
                 }
 
             }
-            if (grafik == null) return;
-            for (int i = 0; i < grafik.n; i++)
-            {
-
-                for (int j = 0; j < i + 1; j++)
-                {
-                    if (grafik.wierzcholki[i, j])
-                    {
-                        if (i == zaznaczony || j == zaznaczony) g.DrawLine(p2, wsp_punktow[i, 0] + 5, wsp_punktow[i, 1] + 5, wsp_punktow[j, 0] + 5, wsp_punktow[j, 1] + 5);
-                        else if (i == zaznaczony2 || j == zaznaczony2) g.DrawLine(p3, wsp_punktow[i, 0] + 5, wsp_punktow[i, 1] + 5, wsp_punktow[j, 0] + 5, wsp_punktow[j, 1] + 5);
-                        else g.DrawLine(p1, wsp_punktow[i, 0] + 5, wsp_punktow[i, 1] + 5, wsp_punktow[j, 0] + 5, wsp_punktow[j, 1] + 5);
-                    }
-                }
-            }
-
-
-
-
-            for (int i = 0; i < grafik.n; i++)
-            {
-                if (i == zaznaczony) g.FillEllipse(b2, wsp_punktow[i, 0], wsp_punktow[i, 1], 10, 10);
-                else if (i == zaznaczony2) g.FillEllipse(b3, wsp_punktow[i, 0], wsp_punktow[i, 1], 10, 10);
-                else g.FillEllipse(b, wsp_punktow[i, 0], wsp_punktow[i, 1], 10, 10);
-            }
-
-
-
-            if (zaznaczony != null) return;
+            if (graph == null) return;
             FontFamily fontFamily = new FontFamily("Arial");
             Font font = new Font(
                fontFamily,
@@ -216,19 +97,59 @@ namespace MinimalSpanningTree
                FontStyle.Regular,
                GraphicsUnit.Point);
 
-            for (int i = 0; i < grafik.n; i++)
+            int[,] co = graph.coPoints;
+
+            for (int i = 0; i < graph.N; i++)
             {
-                g.DrawString(Convert.ToString(i), font, b2, wsp_punktow[i, 0], wsp_punktow[i, 1] - 15);
+
+                for (int j = 0; j < i + 1; j++)
+                {
+                    if (graph.Nodes[i, j])
+                    {
+                        if (i == zaznaczony || j == zaznaczony) g.DrawLine(p2, co[i, 0] + 5, co[i, 1] + 5, co[j, 0] + 5, co[j, 1] + 5);
+                        else if (i == zaznaczony2 || j == zaznaczony2) g.DrawLine(p3, co[i, 0] + 5, co[i, 1] + 5, co[j, 0] + 5, co[j, 1] + 5);
+                        else g.DrawLine(p1, co[i, 0] + 5, co[i, 1] + 5, co[j, 0] + 5, co[j, 1] + 5);
+
+                        g.DrawString(Convert.ToString(i), font, b3,
+                            (co[i, 0]+ co[j, 0])/2, (co[i, 1]+ co[j, 1])/2);
+
+                    }
+                }
             }
 
-            foreach (Krawedz w in spr)
+
+
+
+            for (int i = 0; i < graph.N; i++)
             {
-                g.DrawLine(p4, wsp_punktow[w.wierzcholekA, 0] + 5, wsp_punktow[w.wierzcholekA, 1] + 5, wsp_punktow[w.wierzcholekB, 0] + 5, wsp_punktow[w.wierzcholekB, 1] + 5);
+                if (i == zaznaczony) g.FillEllipse(b2, co[i, 0], co[i, 1], 10, 10);
+                else if (i == zaznaczony2) g.FillEllipse(b3, co[i, 0], co[i, 1], 10, 10);
+                else g.FillEllipse(b, co[i, 0], co[i, 1], 10, 10);
+            }
+
+
+
+            if (zaznaczony != null) return;
+            //FontFamily fontFamily = new FontFamily("Arial");
+            //Font font = new Font(
+            //   fontFamily,
+            //   8,
+            //   FontStyle.Regular,
+            //   GraphicsUnit.Point);
+
+            for (int i = 0; i < graph.N; i++)
+            {
+                g.DrawString(Convert.ToString(i), font, b2, co[i, 0], co[i, 1] - 15);
+            }
+
+            foreach (Edge w in spr)
+            {
+                g.DrawLine(p4, co[w.wierzcholekA, 0] + 5, co[w.wierzcholekA, 1] + 5, co[w.wierzcholekB, 0] + 5, co[w.wierzcholekB, 1] + 5);
             }
             // zaznaczony = null;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void generateButton_Click(object sender, EventArgs e)
         {
             int prawdopodobienstwo = trackBar1.Value;
             try
@@ -249,33 +170,39 @@ namespace MinimalSpanningTree
             //ilosc_wierzcholkow = Convert.ToInt32(textBox1.Text);
 
             cykl_w_stringu = "";
-            grafik = new Graf(ilosc_wierzcholkow, prawdopodobienstwo);
+            graph = new Graph(ilosc_wierzcholkow, prawdopodobienstwo);
             int i = 0;
 
             using (GenerateForm gen = new GenerateForm())
             {
-                if (gen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (gen.ShowDialog() == DialogResult.OK)
                 {
                     i = gen.k;
                 }
-                else if (gen.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+                else if (gen.DialogResult == DialogResult.Cancel)
                 {
-                    grafik = null;
+                    graph = null;
                     return;
                 }
             }
-            wsp_punktow = null;
+            graph.coPoints = null;
             switch (i)
             {
                 case 0:
-                    wyznacz_wspolrzedne_los();
+                    graph.wyznacz_wspolrzedne_los(panel1.Width, panel1.Height);
                     break;
 
                 case 1:
-                    wyznacz_wspolrzedne_kolo();
+                    graph.wyznacz_wspolrzedne_kolo(panel1.Width, panel1.Height);
                     break;
                 case 2:
-                    wyznacz_wspolrzedne_siatka();
+                    if (graph.N > 80)
+                    {
+                        graph = null;
+                        MessageBox.Show("Enter node size less that 80");
+                        return;
+                    }
+                    else graph.wyznacz_wspolrzedne_siatka(panel1.Width);
                     break;
 
             }
@@ -305,7 +232,7 @@ namespace MinimalSpanningTree
 
         private void panel1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (grafik == null) return;
+            if (graph == null) return;
             else if (e.Button != MouseButtons.Left) return;
             else if (!panel1.Bounds.Contains(e.X + panel1.Left, e.Y + panel1.Top)) return;
             //time.Start();
@@ -313,10 +240,10 @@ namespace MinimalSpanningTree
             int mx = e.X;
             int my = e.Y;
 
-            for (int i = 0; i < grafik.n; i++)
+            for (int i = 0; i < graph.N; i++)
             {
 
-                if (Math.Abs(mx - wsp_punktow[i, 0]) < 10 && Math.Abs(my - wsp_punktow[i, 1]) < 10)
+                if (Math.Abs(mx - graph.coPoints[i, 0]) < 10 && Math.Abs(my - graph.coPoints[i, 1]) < 10)
                 {
                     zaznaczony = i;
                     break;
@@ -326,8 +253,8 @@ namespace MinimalSpanningTree
             if (zaznaczony == null) return;
 
 
-            wsp_punktow[Convert.ToInt32(zaznaczony), 0] = mx;
-            wsp_punktow[Convert.ToInt32(zaznaczony), 1] = my;
+            graph.coPoints[Convert.ToInt32(zaznaczony), 0] = mx;
+            graph.coPoints[Convert.ToInt32(zaznaczony), 1] = my;
 
 
 
@@ -353,56 +280,55 @@ namespace MinimalSpanningTree
             {
                 cykl_w_stringu = "";
                 zaznaczony2 = null;
-                if (grafik == null)
+                if (graph == null)
                 {
-                    grafik = new Graf(1, 0);
-                    wsp_punktow = new int[1, 2];
-                    wsp_punktow[0, 0] = e.X;
-                    wsp_punktow[0, 1] = e.Y;
-                    grafik.prawdopodobienstwo = 0;
+                    graph = new Graph(1, 0);
+                    graph.coPoints = new int[1, 2];
+                    graph.coPoints[0, 0] = e.X;
+                    graph.coPoints[0, 1] = e.Y;
                 }
                 else
                 {
                     bool usun = false;
 
-                    for (int i = 0; i < grafik.n; i++)
+                    for (int i = 0; i < graph.N; i++)
                     {
-                        if (Math.Abs(e.X - wsp_punktow[i, 0]) < 10 && Math.Abs(e.Y - wsp_punktow[i, 1]) < 10)
+                        if (Math.Abs(e.X - graph.coPoints[i, 0]) < 10 && Math.Abs(e.Y - graph.coPoints[i, 1]) < 10)
                         {
                             //MessageBox.Show(Convert.ToString(i));
-                            if (grafik.n == 1)
+                            if (graph.N == 1)
                             {
-                                grafik = null;
+                                graph = null;
                                 return;
                             }
                             usun = true;
-                            grafik.odejmij_w(i);
-                            int[,] temp = new int[grafik.n, 2];
+                            graph.RemoveNode(i);
+                            int[,] temp = new int[graph.N, 2];
                             int k = 0;
-                            for (int j = 0; j < grafik.n; j++)
+                            for (int j = 0; j < graph.N; j++)
                             {
                                 if (j == i) k = 1;
-                                temp[j, 0] = wsp_punktow[j + k, 0];
-                                temp[j, 1] = wsp_punktow[j + k, 1];
+                                temp[j, 0] = graph.coPoints[j + k, 0];
+                                temp[j, 1] = graph.coPoints[j + k, 1];
 
                             }
-                            wsp_punktow = temp;
+                            graph.coPoints = temp;
 
                             break;
                         }
                     }
                     if (!usun)
                     {
-                        grafik.dodaj_w();
-                        int[,] temp = new int[grafik.n, 2];
-                        for (int i = 0; i < grafik.n - 1; i++)
+                        graph.AddNode();
+                        int[,] temp = new int[graph.N, 2];
+                        for (int i = 0; i < graph.N - 1; i++)
                         {
-                            temp[i, 0] = wsp_punktow[i, 0];
-                            temp[i, 1] = wsp_punktow[i, 1];
+                            temp[i, 0] = graph.coPoints[i, 0];
+                            temp[i, 1] = graph.coPoints[i, 1];
                         }
-                        temp[grafik.n - 1, 0] = e.X;
-                        temp[grafik.n - 1, 1] = e.Y;
-                        wsp_punktow = temp;
+                        temp[graph.N - 1, 0] = e.X;
+                        temp[graph.N - 1, 1] = e.Y;
+                        graph.coPoints = temp;
                     }
 
                 }
@@ -410,23 +336,23 @@ namespace MinimalSpanningTree
                 return;
             }
             if (e.Button != MouseButtons.Right) return;
-            if (grafik == null) return;
+            if (graph == null) return;
             int mx = e.X;
             int my = e.Y;
 
-            for (int i = 0; i < grafik.n; i++)
+            for (int i = 0; i < graph.N; i++)
             {
 
-                if (Math.Abs(mx - wsp_punktow[i, 0]) < 10 && Math.Abs(my - wsp_punktow[i, 1]) < 10)
+                if (Math.Abs(mx - graph.coPoints[i, 0]) < 10 && Math.Abs(my - graph.coPoints[i, 1]) < 10)
                 {
                     if (zaznaczony2 != null)
                     {
                         cykl_w_stringu = "";
-                        grafik.wierzcholki[Convert.ToInt32(zaznaczony2), i] = !grafik.wierzcholki[Convert.ToInt32(zaznaczony2), i];
-                        grafik.wierzcholki[i, Convert.ToInt32(zaznaczony2)] = !grafik.wierzcholki[i, Convert.ToInt32(zaznaczony2)];
+                        graph.Nodes[Convert.ToInt32(zaznaczony2), i] = !graph.Nodes[Convert.ToInt32(zaznaczony2), i];
+                        graph.Nodes[i, Convert.ToInt32(zaznaczony2)] = !graph.Nodes[i, Convert.ToInt32(zaznaczony2)];
                         zaznaczony2 = null;
                         panel1.Refresh();
-                        grafik.wylicz_stopien();
+                        graph.CalculatedDeg();
                         return;
                     }
                     else
@@ -450,20 +376,20 @@ namespace MinimalSpanningTree
         public void sprawdz_spojnosc(int ostatni)
         {
             //if (grafik == null) return;
-            grafik.spojny = false;
-            if (spr_wierzcholki.Count == grafik.n)
+            graph.Connected = false;
+            if (spr_wierzcholki.Count == graph.N)
             {
-                grafik.spojny = true;
+                graph.Connected = true;
                 return;
             }
             // for (int i = sprawdzone.; i < grafik.n; i++)
             // {
 
-            for (int j = 1; j < grafik.n; j++)
+            for (int j = 1; j < graph.N; j++)
             {
-                if (grafik.wierzcholki[ostatni, j] && !spr_wierzcholki.Contains(j))
+                if (graph.Nodes[ostatni, j] && !spr_wierzcholki.Contains(j))
                 {
-                    Krawedz temp = new Krawedz();
+                    Edge temp = new Edge();
                     temp.wierzcholekA = ostatni;
                     temp.wierzcholekB = j;
                     spr.Add(temp);
@@ -484,19 +410,19 @@ namespace MinimalSpanningTree
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (grafik == null) return;
+            if (graph == null) return;
             spr.Clear();
             spr_wierzcholki.Clear();
             panel1.Refresh();
             string help = "and Eulerian";
-            for (int i = 0; i < grafik.n; i++)
+            for (int i = 0; i < graph.N; i++)
             {
-                if (grafik.deg[i] == 0)
+                if (graph.Deg[i] == 0)
                 {
                     MessageBox.Show("Graph is not connected - W" + i + " is not connected");
                     return;
                 }
-                else if (grafik.deg[i] % 2 == 1)
+                else if (graph.Deg[i] % 2 == 1)
                 {
                     help = "but not Eulerian - click Repair";
                 }
@@ -505,7 +431,7 @@ namespace MinimalSpanningTree
             spr_wierzcholki.Add(0);
             sprawdz_spojnosc(0);
 
-            if (grafik.spojny)
+            if (graph.Connected)
             {
                 MessageBox.Show("Graf jest spójny " + help);
             }
@@ -519,107 +445,27 @@ namespace MinimalSpanningTree
 
         }
 
-        //naprawa grafu
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (grafik == null) return;
-            //spr_wierzcholki = null;
-            zaznaczony2 = null;
-            Random rnd = new Random();
-            for (int i = 0; i < grafik.n; i++)
-            {
-                if (grafik.deg[i] == 0)
-                {
-                    int ile = rnd.Next(grafik.n) + 0;
-
-                    for (int j = 0; j < ile; j++)
-                    {
-                        int gdzie = i;
-                        while (i == gdzie) { gdzie = rnd.Next(grafik.n) + 0; }
-                        grafik.wierzcholki[i, gdzie] = true;
-                        grafik.wierzcholki[gdzie, i] = true;
-                        grafik.wylicz_stopien();
-                    }
-                    // grafik.wylicz_stopien();
-                }
-            }
-
-            if (grafik.n == 2)
-            {
-                panel1.Refresh();
-                return;
-            }
-            while (true)
-            {
-                int? pierwszy = null;
-                for (int i = 0; i < grafik.n; i++)
-                {
-
-
-                    if (grafik.deg[i] % 2 == 1)
-                    {
-                        if (pierwszy == null)
-                        {
-                            pierwszy = i;
-                        }
-                        else
-                        {
-                            if (grafik.wierzcholki[Convert.ToInt32(pierwszy), i] && (grafik.deg[i] == 1
-                                || grafik.deg[Convert.ToInt32(pierwszy)] == 1)) continue;
-
-                            if (Convert.ToInt32(pierwszy) == i) continue;
-                            grafik.wierzcholki[Convert.ToInt32(pierwszy), i] ^= true;
-                            grafik.wierzcholki[i, Convert.ToInt32(pierwszy)] ^= true;
-                            grafik.wylicz_stopien();
-                            pierwszy = null;
-                        }
-
-                    }
-
-                }
-
-                if (pierwszy == null) break;
-                else
-                {
-                    int temp;
-
-                    temp = rnd.Next(grafik.n) + 0;
-                    if (grafik.wierzcholki[Convert.ToInt32(pierwszy), temp] && (grafik.deg[temp] == 1
-                        || grafik.deg[Convert.ToInt32(pierwszy)] == 1)) continue;
-
-                    if (Convert.ToInt32(pierwszy) == temp) continue;
-
-                    grafik.wierzcholki[Convert.ToInt32(pierwszy), temp] ^= true;
-                    grafik.wierzcholki[temp, Convert.ToInt32(pierwszy)] ^= true;
-                    grafik.wylicz_stopien();
-
-                }
-            }
-
-            grafik.wylicz_stopien();
-            panel1.Refresh();
-
-        }
+       
         // ścieżka
         private void button5_Click(object sender, EventArgs e)
         {
-            if (grafik == null) return;
-            grafik.spojny = false;
+            if (graph == null) return;
+            graph.Connected = false;
             spr_wierzcholki.Add(0);
             sprawdz_spojnosc(0);
             spr.Clear();
             spr_wierzcholki.Clear();
 
-            if (!grafik.spojny)
+            if (!graph.Connected)
             {
                 MessageBox.Show("Graph is not connected ");
                 return;
             }
 
             int temp_sum = 0;
-            for (int i = 0; i < grafik.n; i++)
+            for (int i = 0; i < graph.N; i++)
             {
-                temp_sum += grafik.deg[i];
+                temp_sum += graph.Deg[i];
             }
 
 
@@ -631,7 +477,7 @@ namespace MinimalSpanningTree
             //grafik.wierzcholki;
 
 
-            Graf pomocniczy = klonuj_graf(grafik);
+            Graph pomocniczy = klonuj_graf(graph);
 
             List<int> mosty = new List<int>();
             //List<int> ciag = new List<int>();
@@ -646,9 +492,9 @@ namespace MinimalSpanningTree
                 cykl.Add(aktualny);
                 bool final = false;
                 bool byl_most = false; // w  sumie to wlasnie nie bylo
-                for (int i = 0; i < pomocniczy.n; i++)
+                for (int i = 0; i < pomocniczy.N; i++)
                 {
-                    if (pomocniczy.wierzcholki[aktualny, i])
+                    if (pomocniczy.Nodes[aktualny, i])
                     {
                         /*
                        // if (pomocniczy.deg[i] > 1)
@@ -680,9 +526,9 @@ namespace MinimalSpanningTree
                         */
                         if (!mosty.Contains(i))
                         {
-                            pomocniczy.wierzcholki[aktualny, i] = false;
-                            pomocniczy.wierzcholki[i, aktualny] = false;
-                            pomocniczy.wylicz_stopien();
+                            pomocniczy.Nodes[aktualny, i] = false;
+                            pomocniczy.Nodes[i, aktualny] = false;
+                            pomocniczy.CalculatedDeg();
                             aktualny = i;
                             byl_most = true;
                             break;
@@ -717,9 +563,9 @@ namespace MinimalSpanningTree
                     {
                         int temp = mosty.First();
                         //cykl.Add(temp);
-                        pomocniczy.wierzcholki[aktualny, temp] = false;
-                        pomocniczy.wierzcholki[temp, aktualny] = false;
-                        pomocniczy.wylicz_stopien();
+                        pomocniczy.Nodes[aktualny, temp] = false;
+                        pomocniczy.Nodes[temp, aktualny] = false;
+                        pomocniczy.CalculatedDeg();
                         aktualny = temp;
                     }
                     else break;
@@ -731,7 +577,7 @@ namespace MinimalSpanningTree
             rysuj_animacje = true;
             for (int i = 0; i < cykl.Count - 1; i++)
             {
-                Krawedz temp = new Krawedz();
+                Edge temp = new Edge();
                 temp.wierzcholekA = cykl[i];
                 temp.wierzcholekB = cykl[i + 1];
                 spr.Add(temp);
@@ -753,10 +599,10 @@ namespace MinimalSpanningTree
             }
 
             bool czy_euler = true;
-            pomocniczy.wylicz_stopien();
-            for (int i = 0; i < pomocniczy.n; i++)
+            pomocniczy.CalculatedDeg();
+            for (int i = 0; i < pomocniczy.N; i++)
             {
-                if (pomocniczy.deg[i] > 0)
+                if (pomocniczy.Deg[i] > 0)
                 {
                     czy_euler = false;
                     break;
@@ -780,11 +626,11 @@ namespace MinimalSpanningTree
             spr_wierzcholki.Clear();
         }
 
-        private void Trajan_rek(int start, Graf g, List<Trajan_node> odwiedzone)
+        private void Trajan_rek(int start, Graph g, List<Trajan_node> odwiedzone)
         {
-            for (int j = 0; j < g.n; j++)
+            for (int j = 0; j < g.N; j++)
             {
-                if (g.wierzcholki[start, j])
+                if (g.Nodes[start, j])
                 {
                     bool contains = false;
                     foreach (Trajan_node t in odwiedzone)
@@ -814,9 +660,9 @@ namespace MinimalSpanningTree
             var start_node = odwiedzone.First(x => x.numer == start);
             Trajan_node start_n = start_node;
             List<int> Low = new List<int>();
-            for (int i = 0; i < g.n; i++)
+            for (int i = 0; i < g.N; i++)
             {
-                if (g.wierzcholki[i, start])
+                if (g.Nodes[i, start])
                 {
                     var temp = odwiedzone.First(x => x.numer == i);
                     Trajan_node xxx = temp;
@@ -835,7 +681,7 @@ namespace MinimalSpanningTree
             start_n.Low = Low.Min();
         }
 
-        private List<int> Trajan(Graf g, int start)
+        private List<int> Trajan(Graph g, int start)
         {
             List<int> mosty = new List<int>();
             List<Trajan_node> odwiedzone = new List<Trajan_node>();
@@ -848,7 +694,7 @@ namespace MinimalSpanningTree
             string wiadomosc = "";
             foreach (Trajan_node t in odwiedzone)
             {
-                if (g.wierzcholki[t.numer, start])
+                if (g.Nodes[t.numer, start])
                 {
                     if (t.NumerDFS == t.Low)
                     {
@@ -856,27 +702,27 @@ namespace MinimalSpanningTree
                         wiadomosc += t.numer + System.Environment.NewLine;
 
                     }
-                    else if (g.deg[t.numer] == 1) mosty.Add(t.numer);
+                    else if (g.Deg[t.numer] == 1) mosty.Add(t.numer);
                 }
 
             }
             return mosty;
         }
-        private Graf klonuj_graf(Graf g)
+        private Graph klonuj_graf(Graph g)
         {
-            Graf nowy = new Graf(0, 0);
+            Graph nowy = new Graph(0, 0);
 
-            nowy.n = g.n;
-            nowy.wierzcholki = new bool[g.n, g.n];
-            nowy.deg = new int[nowy.n];
-            for (int i = 0; i < g.n; i++)
+            nowy.N = g.N;
+            nowy.Nodes = new bool[g.N, g.N];
+            nowy.Deg = new int[nowy.N];
+            for (int i = 0; i < g.N; i++)
             {
-                for (int k = 0; k < g.n; k++)
+                for (int k = 0; k < g.N; k++)
                 {
-                    nowy.wierzcholki[i, k] = grafik.wierzcholki[i, k];
-                    nowy.wierzcholki[k, i] = grafik.wierzcholki[k, i];
+                    nowy.Nodes[i, k] = graph.Nodes[i, k];
+                    nowy.Nodes[k, i] = graph.Nodes[k, i];
                 }
-                nowy.deg[i] = g.deg[i];
+                nowy.Deg[i] = g.Deg[i];
             }
 
             return nowy;
@@ -884,7 +730,7 @@ namespace MinimalSpanningTree
 
         private void button6_Click(object sender, EventArgs e)
         {
-            grafik = null;
+            graph = null;
             zaznaczony2 = null;
             panel1.Refresh();
         }
@@ -892,7 +738,7 @@ namespace MinimalSpanningTree
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            siatka ^= true;
+            drawGrid ^= true;
             panel1.Refresh();
         }
 

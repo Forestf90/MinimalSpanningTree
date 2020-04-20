@@ -58,8 +58,8 @@
     <Compile Include="GenerateForm.Designer.cs">
       <DependentUpon>GenerateForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Graf.cs" />
-    <Compile Include="Krawedz.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="Edge.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Trajan_node.cs" />

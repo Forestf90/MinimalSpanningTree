@@ -1,0 +1,196 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MinimalSpanningTree
+{
+    class Graph
+    {
+            public bool[,] Nodes;
+            public int N;
+            public int[] Deg;
+            public bool Connected = false;
+            public int[,] coPoints;
+
+            public Graph(int n, int p)
+            {
+                N = n;
+                Nodes = new bool[N, N];
+                CreateConnections(p);
+            }
+
+            private void CreateConnections(int p)
+            {
+                Random rnd = new Random();
+
+                for (int i = 0; i < N; i++)
+                {
+                    for (int j = 0; j < i; j++)
+                    {
+                        int a = rnd.Next(100);
+                        if (a > 0 && a < p) Nodes[i, j] = true;
+                        else Nodes[i, j] = false;
+                    }
+
+                }
+
+                for (int i = 0; i < N; i++)
+                {
+                    for (int j = i; j < N; j++)
+                    {
+                        Nodes[i, j] = Nodes[j, i];
+                    }
+
+                }
+
+                CalculatedDeg();
+            }
+
+
+            public void CalculatedDeg()
+            {
+                Deg = new int[N];
+
+                for (int i = 0; i < N; i++)
+                {
+                    int sum = 0;
+
+                    for (int j = 0; j < N; j++)
+                    {
+                        sum += Convert.ToInt32(Nodes[i, j]);
+                    }
+                    Deg[i] = sum;
+                }
+            }
+
+            public void AddNode()
+            {
+                N = N + 1;
+                bool[,] temp = new bool[N, N];
+
+                for (int i = 0; i < N - 1; i++)
+                {
+                    for (int j = 0; j < N - 1; j++)
+                    {
+                        temp[i, j] = Nodes[i, j];
+                    }
+                }
+
+                for (int i = 0; i < N; i++)
+                {
+                    temp[N - 1, i] = false;
+                    temp[i, N - 1] = false;
+                }
+                Nodes = temp;
+                CalculatedDeg();
+
+            }
+
+            public void RemoveNode(int removeIndex)
+            {
+
+                bool[,] temp = new bool[N - 1, N - 1];
+                N = N - 1;
+                int ii = 0, jj = 0;
+                for (int i = 0; i < N; i++)
+                {
+
+                    if (removeIndex == i) ii = 1;
+                    for (int j = 0; j < N; j++)
+                    {
+
+                        if (removeIndex == j) jj = 1;
+                        temp[i, j] = Nodes[i + ii, j + jj];
+                    }
+                    jj = 0;
+                }
+
+                Nodes = temp;
+
+                CalculatedDeg();
+            }
+
+        public void wyznacz_wspolrzedne_los(int width, int height)
+        {
+
+
+            coPoints = new int[N, 2];
+
+            Random rnd = new Random();
+            for (int i = 0; i < N; i++)
+            {
+                int x = rnd.Next(10, width - 15);
+                int y = rnd.Next(20, height - 20);
+                coPoints[i, 0] = x;
+                coPoints[i, 1] = y;
+
+            }
+
+        }
+
+        public void wyznacz_wspolrzedne_kolo(int width, int height)
+        {
+
+
+            coPoints = new int[N, 2];
+
+
+            int centrumx = width / 2;
+            int centrumy = height / 2;
+
+            int x = 0;
+            int y = 0;
+            int srednica = (height / 3);
+            int i = 0;
+            for (double angle = 0.0f; angle <= (2.0f * Math.PI); angle += ((Math.PI * 2.0f) / N))
+            {
+                if (i == N) break;
+                x = Convert.ToInt32(srednica * Math.Sin(angle)) + centrumx;
+                y = Convert.ToInt32(srednica * Math.Cos(angle)) + centrumy;
+                coPoints[i, 0] = x;
+                coPoints[i, 1] = y;
+                i++;
+
+            }
+        }
+
+        public void wyznacz_wspolrzedne_siatka(int width)
+        {
+
+
+            coPoints = new int[N, 2];
+
+            Random rnd = new Random();
+            for (int i = 0; i < N; i++)
+            {
+                int x = rnd.Next(1, 10);
+                int y = rnd.Next(1, 10);
+                bool bylo = false;
+                x = x * (width / 10) - 5;
+                y = y * (width / 10) - 5;
+                for (int j = 0; j < i; j++)
+                {
+
+                    if (x == coPoints[j, 0] && y == coPoints[j, 1])
+                    {
+                        i = i - 1;
+                        bylo = true;
+                        break;
+                    }
+
+                }
+
+                if (!bylo)
+                {
+                    coPoints[i, 0] = x;
+                    coPoints[i, 1] = y;
+                }
+
+            }
+
+        }
+    }
+  
+}
