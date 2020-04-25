@@ -8,8 +8,20 @@ namespace MinimalSpanningTree
 {
     class Edge
     {
-        public int wierzcholekA;
-        public int wierzcholekB;
-        public int Cost { get; set; } = 8;
+        public int NodeOne;
+        public int NodeTwo;
+        public double Cost;
+
+        public Edge(int one, int two, double cost)
+        {
+            NodeOne = one;
+            NodeTwo = two;
+            Cost = cost;
+        }
+
+        public Edge()
+        {
+
+        }
     }
 }
