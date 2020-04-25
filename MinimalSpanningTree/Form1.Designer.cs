@@ -38,9 +38,9 @@
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label2 = new System.Windows.Forms.Label();
             this.generateButton = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.conectivityButton = new System.Windows.Forms.Button();
+            this.mstButton = new System.Windows.Forms.Button();
+            this.clearButton = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -141,38 +141,38 @@
             this.generateButton.UseVisualStyleBackColor = true;
             this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
             // 
-            // button4
+            // conectivityButton
             // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button4.Location = new System.Drawing.Point(30, 259);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(303, 23);
-            this.button4.TabIndex = 8;
-            this.button4.Text = "Check conectivity";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.conectivityButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.conectivityButton.Location = new System.Drawing.Point(30, 259);
+            this.conectivityButton.Name = "conectivityButton";
+            this.conectivityButton.Size = new System.Drawing.Size(303, 23);
+            this.conectivityButton.TabIndex = 8;
+            this.conectivityButton.Text = "Check conectivity";
+            this.conectivityButton.UseVisualStyleBackColor = true;
+            this.conectivityButton.Click += new System.EventHandler(this.conectivityButton_Click);
             // 
-            // button5
+            // mstButton
             // 
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(30, 367);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(303, 28);
-            this.button5.TabIndex = 12;
-            this.button5.Text = "Search MST";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.mstButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mstButton.Location = new System.Drawing.Point(30, 367);
+            this.mstButton.Name = "mstButton";
+            this.mstButton.Size = new System.Drawing.Size(303, 28);
+            this.mstButton.TabIndex = 12;
+            this.mstButton.Text = "Search MST";
+            this.mstButton.UseVisualStyleBackColor = true;
+            this.mstButton.Click += new System.EventHandler(this.mstButton_Click);
             // 
-            // button6
+            // clearButton
             // 
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button6.Location = new System.Drawing.Point(725, 401);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(51, 26);
-            this.button6.TabIndex = 14;
-            this.button6.Text = "Clear";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clearButton.Location = new System.Drawing.Point(725, 401);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(51, 26);
+            this.clearButton.TabIndex = 14;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
             // checkBox1
             // 
@@ -193,9 +193,9 @@
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(800, 442);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.clearButton);
+            this.Controls.Add(this.mstButton);
+            this.Controls.Add(this.conectivityButton);
             this.Controls.Add(this.generateButton);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -225,9 +225,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button generateButton;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button conectivityButton;
+        private System.Windows.Forms.Button mstButton;
+        private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.CheckBox checkBox1;
     }
 }

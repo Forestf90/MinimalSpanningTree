@@ -149,7 +149,7 @@ namespace MinimalSpanningTree
 
         private void generateButton_Click(object sender, EventArgs e)
         {
-            int prawdopodobienstwo = trackBar1.Value;
+            int propability = trackBar1.Value;
             try
             {
                 nodesNumber = Convert.ToInt32(textBox1.Text);
@@ -167,7 +167,7 @@ namespace MinimalSpanningTree
             }
 
             TO_DELETE = "";
-            graph = new Graph(nodesNumber, prawdopodobienstwo);
+            graph = new Graph(nodesNumber, propability);
             int i = 0;
 
             using (GenerateForm gen = new GenerateForm())
@@ -280,7 +280,7 @@ namespace MinimalSpanningTree
                 }
                 else
                 {
-                    bool usun = false;
+                    bool delete = false;
 
                     for (int i = 0; i < graph.N; i++)
                     {
@@ -292,7 +292,7 @@ namespace MinimalSpanningTree
                                 graph = null;
                                 return;
                             }
-                            usun = true;
+                            delete = true;
                             graph.RemoveNode(i);
                             int[,] temp = new int[graph.N, 2];
                             int k = 0;
@@ -308,7 +308,7 @@ namespace MinimalSpanningTree
                             break;
                         }
                     }
-                    if (!usun)
+                    if (!delete)
                     {
                         graph.AddNode();
                         int[,] temp = new int[graph.N, 2];
@@ -350,8 +350,6 @@ namespace MinimalSpanningTree
                     {
                         selectedChange = i;
                         panel1.Refresh();
-                        //grafik.wylicz_stopien();
-                        //wypisz_macierz();
                         return;
                     }
 
@@ -364,24 +362,21 @@ namespace MinimalSpanningTree
         }
 
 
-        public void checkConectivity(int ostatni)
+        public void checkConectivity(int last)
         {
-            //if (grafik == null) return;
             graph.Connected = false;
             if (algorithmNodes.Count == graph.N)
             {
                 graph.Connected = true;
                 return;
             }
-            // for (int i = sprawdzone.; i < grafik.n; i++)
-            // {
 
             for (int j = 1; j < graph.N; j++)
             {
-                if (graph.Nodes[ostatni, j] && !algorithmNodes.Contains(j))
+                if (graph.Nodes[last, j] && !algorithmNodes.Contains(j))
                 {
                     Edge temp = new Edge();
-                    temp.NodeOne = ostatni;
+                    temp.NodeOne = last;
                     temp.NodeTwo = j;
                     algorithmEdges.Add(temp);
                     algorithmNodes.Add(j);
@@ -399,50 +394,48 @@ namespace MinimalSpanningTree
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private bool checkCycle(Edge edge, List<Edge> currentEdges)
+        {
+
+            foreach(Edge e in currentEdges)
+            {
+                if (e.NodeTwo == edge.NodeTwo) return true;
+            }
+
+            return false;
+        }
+
+        private void conectivityButton_Click(object sender, EventArgs e)
         {
             if (graph == null) return;
             algorithmEdges.Clear();
             algorithmNodes.Clear();
             panel1.Refresh();
-            string help = "and Eulerian";
-            for (int i = 0; i < graph.N; i++)
-            {
-                if (graph.Deg[i] == 0)
-                {
-                    MessageBox.Show("Graph is not connected - W" + i + " is not connected");
-                    return;
-                }
-                else if (graph.Deg[i] % 2 == 1)
-                {
-                    help = "but not Eulerian - click Repair";
-                }
-            }
             drawAnimation = true;
             algorithmNodes.Add(0);
             checkConectivity(0);
 
             if (graph.Connected)
             {
-                MessageBox.Show("Graf jest spójny " + help);
+                MessageBox.Show("Graph is connected");
             }
             else
             {
                 MessageBox.Show("Graph is not connected ");
-                
-            }// spr.Clear();
-            drawAnimation = false;
-            algorithmNodes.Clear();
-
+                drawAnimation = false;
+                algorithmNodes.Clear();
+            }
         }
 
        
-        // ścieżka
-        private void button5_Click(object sender, EventArgs e)
+        private void mstButton_Click(object sender, EventArgs e)
         {
             if (graph == null) return;
             graph.Connected = false;
+            algorithmNodes.Clear();
             algorithmNodes.Add(0);
+            algorithmEdges.Clear();
+            drawAnimation = false;
             checkConectivity(0);
             algorithmEdges.Clear();
             algorithmNodes.Clear();
@@ -453,126 +446,50 @@ namespace MinimalSpanningTree
                 return;
             }
 
-            int temp_sum = 0;
-            for (int i = 0; i < graph.N; i++)
-            {
-                temp_sum += graph.Deg[i];
-            }
-
-
-            int aktualny = Convert.ToInt32(selectedChange);
-            algorithmNodes.Add(aktualny);
             selectedChange = null;
             panel1.Refresh();
-            List<int> cykl = new List<int>();
-            //grafik.wierzcholki;
 
+            List<Edge> mstEdges = new List<Edge>();
+            List<Edge> clonedEdges = graph.Edges.OrderBy(edge => edge.Cost).ToList();
+            DisjointSet ds = new DisjointSet();
+            ds.MakeSet(graph.N);
 
-            Graph pomocniczy = cloneGraph(graph);
+            int index = 0;
 
-            List<int> mosty = new List<int>();
-            //List<int> ciag = new List<int>();
-            //cykl.Add(aktualny);
-            int startowy = aktualny;
-            int ostatni = 100000;
-            while (true)
+            while (mstEdges.Count != graph.N - 1)
             {
-                //MessageBox.Show(Convert.ToString(aktualny));
-                mosty.Clear();
-                //mosty = Trajan(pomocniczy, aktualny);
-                cykl.Add(aktualny);
-                bool final = false;
-                bool byl_most = false; // w  sumie to wlasnie nie bylo
-                for (int i = 0; i < pomocniczy.N; i++)
-                {
-                    if (pomocniczy.Nodes[aktualny, i])
-                    {
-                        /*
-                       // if (pomocniczy.deg[i] > 1)
-                        if(!mosty.Contains(i))
-                        {
-                            if (pomocniczy.deg[i] == 2 && aktualny!=startowy)
-                            {
-                                if (pomocniczy.wierzcholki[startowy, i] == true && pomocniczy.deg[startowy]==1)
-                                {
-                                    //mosty.Add(i);
-                                    //byl_most = true;
-                                    ostatni = i;
-                                    final = true;
-                                    continue;
-                                }
-                            }
-                            byl_most = true;
-                            //cykl.Add(aktualny);
-                            pomocniczy.wierzcholki[aktualny, i] = false;
-                            pomocniczy.wierzcholki[i, aktualny] = false;
-                            pomocniczy.wylicz_stopien();
-                            aktualny = i;
-                            break;
-                        }
-                        else
-                        {
-                            mosty.Add(i);
-                        }
-                        */
-                        if (!mosty.Contains(i))
-                        {
-                            pomocniczy.Nodes[aktualny, i] = false;
-                            pomocniczy.Nodes[i, aktualny] = false;
-                            pomocniczy.CalculatedDeg();
-                            aktualny = i;
-                            byl_most = true;
-                            break;
-                        }
-                    }
-                }
-                if (!byl_most)
-                {
-                    /*
-                    if (!mosty.Any())
-                    {
-                        if (final)
-                        {
-                            cykl.Add(ostatni);
-                            cykl.Add(startowy);
-                            pomocniczy.wierzcholki[ostatni, aktualny] = false;
-                            pomocniczy.wierzcholki[aktualny, ostatni] = false;
-                            pomocniczy.wierzcholki[ostatni, startowy] = false;
-                            pomocniczy.wierzcholki[startowy, ostatni] = false;
-                            break;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    
-                    }
-                    else
-                    {
-                        */
-                    if (mosty.Any())
-                    {
-                        int temp = mosty.First();
-                        //cykl.Add(temp);
-                        pomocniczy.Nodes[aktualny, temp] = false;
-                        pomocniczy.Nodes[temp, aktualny] = false;
-                        pomocniczy.CalculatedDeg();
-                        aktualny = temp;
-                    }
-                    else break;
-                    // }
+                Edge next = clonedEdges[index++];
 
-                }
 
+                int x = ds.Find(next.NodeOne);
+                int y = ds.Find(next.NodeTwo);
+
+ 
+                if (x != y)
+                {
+                    mstEdges.Add(next);
+                    ds.Union(x, y);
+                }
             }
-            drawAnimation = true;
-            for (int i = 0; i < cykl.Count - 1; i++)
-            {
-                Edge temp = new Edge();
-                temp.NodeOne = cykl[i];
-                temp.NodeTwo = cykl[i + 1];
-                algorithmEdges.Add(temp);
 
+
+            //foreach (Edge edg in clonedEdges)
+            //{
+            //    if(checkCycle(edg, clonedEdges))
+            //    {
+            //        mstEdges.Add(edg);
+            //        if (!nodesTree.Contains(edg.NodeOne)) nodesTree.Add(edg.NodeOne);
+            //        if (!nodesTree.Contains(edg.NodeTwo)) nodesTree.Add(edg.NodeTwo);
+            //    }
+
+            //    if (nodesTree.Count == graph.N) break;
+            //}
+
+            drawAnimation = true;
+
+            foreach (Edge edg in mstEdges)
+            {
+                algorithmEdges.Add(edg);
                 panel1.Refresh();
                 System.Threading.Thread.Sleep(500);
 
@@ -580,67 +497,14 @@ namespace MinimalSpanningTree
 
             drawAnimation = false;
 
-            string aa = "";
-
-            foreach (int k in cykl)
-            {
-                // aa += Convert.ToString(k.wierzcholekA) + "-->" + Convert.ToString(k.wierzcholekB)+Environment.NewLine;
-                if (aa == "") aa = Convert.ToString(k);
-                else aa += "->" + k;
-            }
-
-            bool czy_euler = true;
-            pomocniczy.CalculatedDeg();
-            for (int i = 0; i < pomocniczy.N; i++)
-            {
-                if (pomocniczy.Deg[i] > 0)
-                {
-                    czy_euler = false;
-                    break;
-                }
-            }
-
-            if (cykl[0] == cykl[cykl.Count - 1]) aa = "Cykl Eulera: " + aa;
-            else aa = "Graf nie posiada cyklu Eulera lecz jest grafem pol-eulerowskim poniewaz posiada sciezke Eulera" +
-                    System.Environment.NewLine + "Sciezka Eulera :" + aa;
-            
-            string jednak_nie = "";
-            jednak_nie = "The graph does not have an euler cycle";
-            TO_DELETE = aa;
-            if (czy_euler) MessageBox.Show(aa);
-            else
-            {
-                TO_DELETE = jednak_nie;
-                MessageBox.Show(jednak_nie);
-            }
+           
             algorithmEdges.Clear();
             algorithmNodes.Clear();
         }
 
 
 
-
-        private Graph cloneGraph(Graph g)
-        {
-            Graph nowy = new Graph(0, 0);
-
-            nowy.N = g.N;
-            nowy.Nodes = new bool[g.N, g.N];
-            nowy.Deg = new int[nowy.N];
-            for (int i = 0; i < g.N; i++)
-            {
-                for (int k = 0; k < g.N; k++)
-                {
-                    nowy.Nodes[i, k] = graph.Nodes[i, k];
-                    nowy.Nodes[k, i] = graph.Nodes[k, i];
-                }
-                nowy.Deg[i] = g.Deg[i];
-            }
-
-            return nowy;
-        }
-
-        private void button6_Click(object sender, EventArgs e)
+        private void clearButton_Click(object sender, EventArgs e)
         {
             graph = null;
             selectedChange = null;

@@ -7,7 +7,7 @@ namespace MinimalSpanningTree
     {
         public bool[,] Nodes;
         public int N;
-        public int[] Deg;
+        //public int[] Deg;
         public bool Connected = false;
         public int[,] CoPoints;
         public List<Edge> Edges = new List<Edge>();
@@ -31,7 +31,7 @@ namespace MinimalSpanningTree
                     if (a > 0 && a < p)
                     {
                         Nodes[i, j] = true;
-                        double cost = rnd.Next(20);
+                        double cost = rnd.Next(1,20);
                         Edges.Add(new Edge(i, j, cost));
                     }
                     else Nodes[i, j] = false;
@@ -54,18 +54,18 @@ namespace MinimalSpanningTree
 
         public void CalculatedDeg()
         {
-            Deg = new int[N];
+            //Deg = new int[N];
 
-            for (int i = 0; i < N; i++)
-            {
-                int sum = 0;
+            //for (int i = 0; i < N; i++)
+            //{
+            //    int sum = 0;
 
-                for (int j = 0; j < N; j++)
-                {
-                    sum += Convert.ToInt32(Nodes[i, j]);
-                }
-                Deg[i] = sum;
-            }
+            //    for (int j = 0; j < N; j++)
+            //    {
+            //        sum += Convert.ToInt32(Nodes[i, j]);
+            //    }
+            //    Deg[i] = sum;
+            //}
         }
 
         public void AddNode()
