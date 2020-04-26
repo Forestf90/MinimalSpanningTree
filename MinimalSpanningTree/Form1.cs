@@ -33,7 +33,6 @@ namespace MinimalSpanningTree
         Bitmap b1;
         int nodesNumber;
 
-        string TO_DELETE;
         bool drawGrid;
         static int gridCellWidth;
         public Form1()
@@ -109,16 +108,12 @@ namespace MinimalSpanningTree
                 }
             }
 
-
-
-
             for (int i = 0; i < graph.N; i++)
             {
                 if (i == selectedMove) g.FillEllipse(bRed, co[i, 0], co[i, 1], 10, 10);
                 else if (i == selectedChange) g.FillEllipse(bBlue, co[i, 0], co[i, 1], 10, 10);
                 else g.FillEllipse(bBlack, co[i, 0], co[i, 1], 10, 10);
             }
-
 
 
             if (selectedMove != null) return;
@@ -129,12 +124,6 @@ namespace MinimalSpanningTree
                FontStyle.Regular,
                GraphicsUnit.Point);
 
-   
-            foreach(Edge e in graph.Edges)
-            {
-                g.DrawString(Convert.ToString(e.Cost), font, bBlue, (co[e.NodeOne, 0] + co[e.NodeTwo, 0]) / 2 - font.Height / 2,
-                            (co[e.NodeOne, 1] + co[e.NodeTwo, 1]) / 2 - font.Height / 2);
-            }
 
             for (int i = 0; i < graph.N; i++)
             {
@@ -144,6 +133,12 @@ namespace MinimalSpanningTree
             foreach (Edge w in algorithmEdges)
             {
                 g.DrawLine(pViolet, co[w.NodeOne, 0] + 5, co[w.NodeOne, 1] + 5, co[w.NodeTwo, 0] + 5, co[w.NodeTwo, 1] + 5);
+            }
+
+            foreach (Edge e in graph.Edges)
+            {
+                g.DrawString(Convert.ToString(e.Cost), font, bBlue, (co[e.NodeOne, 0] + co[e.NodeTwo, 0]) / 2 - font.Height / 2,
+                            (co[e.NodeOne, 1] + co[e.NodeTwo, 1]) / 2 - font.Height / 2);
             }
         }
 
@@ -166,7 +161,6 @@ namespace MinimalSpanningTree
                 return;
             }
 
-            TO_DELETE = "";
             graph = new Graph(nodesNumber, propability);
             int i = 0;
 
@@ -269,7 +263,6 @@ namespace MinimalSpanningTree
 
             if (e.Button == MouseButtons.Middle)
             {
-                TO_DELETE = "";
                 selectedChange = null;
                 if (graph == null)
                 {
@@ -338,7 +331,6 @@ namespace MinimalSpanningTree
                 {
                     if (selectedChange != null)
                     {
-                        TO_DELETE = "";
                         graph.Nodes[Convert.ToInt32(selectedChange), i] = !graph.Nodes[Convert.ToInt32(selectedChange), i];
                         graph.Nodes[i, Convert.ToInt32(selectedChange)] = !graph.Nodes[i, Convert.ToInt32(selectedChange)];
                         selectedChange = null;
@@ -388,22 +380,11 @@ namespace MinimalSpanningTree
                     }
 
                     checkConectivity(j);
-                    // return;
-                    //  f.g.DrawLine(ppp, f.wsp_punktow[j, 0]),);
                 }
             }
         }
 
-        private bool checkCycle(Edge edge, List<Edge> currentEdges)
-        {
 
-            foreach(Edge e in currentEdges)
-            {
-                if (e.NodeTwo == edge.NodeTwo) return true;
-            }
-
-            return false;
-        }
 
         private void conectivityButton_Click(object sender, EventArgs e)
         {
@@ -451,7 +432,7 @@ namespace MinimalSpanningTree
 
             List<Edge> mstEdges = new List<Edge>();
             List<Edge> clonedEdges = graph.Edges.OrderBy(edge => edge.Cost).ToList();
-            DisjointSet ds = new DisjointSet();
+            DisjointSet ds = new DisjointSet(graph.N);
             ds.MakeSet(graph.N);
 
             int index = 0;
@@ -472,18 +453,6 @@ namespace MinimalSpanningTree
                 }
             }
 
-
-            //foreach (Edge edg in clonedEdges)
-            //{
-            //    if(checkCycle(edg, clonedEdges))
-            //    {
-            //        mstEdges.Add(edg);
-            //        if (!nodesTree.Contains(edg.NodeOne)) nodesTree.Add(edg.NodeOne);
-            //        if (!nodesTree.Contains(edg.NodeTwo)) nodesTree.Add(edg.NodeTwo);
-            //    }
-
-            //    if (nodesTree.Count == graph.N) break;
-            //}
 
             drawAnimation = true;
 
