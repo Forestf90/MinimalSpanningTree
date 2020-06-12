@@ -331,8 +331,27 @@ namespace MinimalSpanningTree
                 {
                     if (selectedChange != null)
                     {
-                        graph.Nodes[Convert.ToInt32(selectedChange), i] = !graph.Nodes[Convert.ToInt32(selectedChange), i];
-                        graph.Nodes[i, Convert.ToInt32(selectedChange)] = !graph.Nodes[i, Convert.ToInt32(selectedChange)];
+                        int selChangeInt = Convert.ToInt32(selectedChange);
+                        if (graph.Nodes[selChangeInt, i])
+                        {
+                            Edge toRemove = null;
+                            foreach (Edge edg in graph.Edges)
+                            {
+                                if(edg.NodeOne == selChangeInt && edg.NodeTwo == i
+                                    || edg.NodeOne == i && edg.NodeTwo == selChangeInt)
+                                {
+                                    toRemove = edg;
+                                    break;
+                                }
+                            }
+                            graph.Edges.Remove(toRemove);
+                        } 
+                        else
+                        {
+                            graph.Edges.Add(new Edge(i, selChangeInt, new Random().Next(1,20)));
+                        }
+                        graph.Nodes[selChangeInt, i] = !graph.Nodes[selChangeInt, i];
+                        graph.Nodes[i, selChangeInt] = !graph.Nodes[i, selChangeInt];
                         selectedChange = null;
                         panel1.Refresh();
                         graph.CalculatedDeg();
@@ -455,18 +474,20 @@ namespace MinimalSpanningTree
 
 
             drawAnimation = true;
-
+            String massage = "Minimal spanning tree edges:" + Environment.NewLine;
+            double totalCost = 0;
             foreach (Edge edg in mstEdges)
             {
                 algorithmEdges.Add(edg);
                 panel1.Refresh();
                 System.Threading.Thread.Sleep(500);
-
+                massage += edg.GetString() + Environment.NewLine;
+                totalCost += edg.Cost;
             }
-
+            massage += "Total cost: " + totalCost;
             drawAnimation = false;
 
-           
+            MessageBox.Show(massage, "Spanning Tree");
             algorithmEdges.Clear();
             algorithmNodes.Clear();
         }

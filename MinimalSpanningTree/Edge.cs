@@ -23,5 +23,10 @@ namespace MinimalSpanningTree
         {
 
         }
+
+        public String GetString()
+        {
+            return NodeOne + " -> " + NodeTwo + " cost: "+Cost;
+        }
     }
 }
