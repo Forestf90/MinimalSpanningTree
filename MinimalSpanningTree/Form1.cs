@@ -12,7 +12,6 @@ namespace MinimalSpanningTree
     public partial class Form1 : Form
     {
         Graphics g;
-        Pen pBlack;
         Pen pGreen;
         Pen pRed;
         Pen pBlue;
@@ -21,7 +20,7 @@ namespace MinimalSpanningTree
         Brush bBlack;
         Brush bRed;
         Brush bBlue;
-        Brush bGrey;
+        Brush bViolet;
 
 
         Graph graph;
@@ -32,6 +31,8 @@ namespace MinimalSpanningTree
         bool drawAnimation;
         Bitmap b1;
         int nodesNumber;
+
+        Edge editedEdge;
 
         bool drawGrid;
         static int gridCellWidth;
@@ -45,7 +46,6 @@ namespace MinimalSpanningTree
             b1 = new Bitmap(panel1.Width, panel1.Height);
             b1.SetResolution(97, 97);
             g = Graphics.FromImage(b1);
-            pBlack = new Pen(Color.Black, 5);
             pGreen = new Pen(Color.LawnGreen, 2);
             pRed = new Pen(Color.Red, 2);
             pBlue = new Pen(Color.Blue, 2);
@@ -54,7 +54,7 @@ namespace MinimalSpanningTree
             bBlack = new SolidBrush(Color.Black);
             bRed = new SolidBrush(Color.Red);
             bBlue = new SolidBrush(Color.Blue);
-            bGrey = new SolidBrush(Color.LightGray);
+            bViolet = new SolidBrush(Color.DarkViolet);
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             g.InterpolationMode = InterpolationMode.High;
@@ -139,6 +139,14 @@ namespace MinimalSpanningTree
             {
                 g.DrawString(Convert.ToString(e.Cost), font, bBlue, (co[e.NodeOne, 0] + co[e.NodeTwo, 0]) / 2 - font.Height / 2,
                             (co[e.NodeOne, 1] + co[e.NodeTwo, 1]) / 2 - font.Height / 2);
+            }
+
+            if(editedEdge!= null)
+            {
+                g.DrawLine(pViolet, co[editedEdge.NodeOne, 0] + 5, co[editedEdge.NodeOne, 1] + 5,
+                    co[editedEdge.NodeTwo, 0] + 5, co[editedEdge.NodeTwo, 1] + 5);
+                g.FillEllipse(bViolet, co[editedEdge.NodeOne, 0], co[editedEdge.NodeOne, 1], 10, 10);
+                g.FillEllipse(bViolet, co[editedEdge.NodeTwo, 0], co[editedEdge.NodeTwo, 1], 10, 10);
             }
         }
 
@@ -263,6 +271,8 @@ namespace MinimalSpanningTree
 
             if (e.Button == MouseButtons.Middle)
             {
+                editedEdge = null;
+                groupBox3.Visible = false;
                 selectedChange = null;
                 if (graph == null)
                 {
@@ -323,6 +333,8 @@ namespace MinimalSpanningTree
             if (graph == null) return;
             int mx = e.X;
             int my = e.Y;
+            editedEdge = null;
+            groupBox3.Visible = false;
 
             for (int i = 0; i < graph.N; i++)
             {
@@ -408,6 +420,8 @@ namespace MinimalSpanningTree
         private void conectivityButton_Click(object sender, EventArgs e)
         {
             if (graph == null) return;
+            editedEdge = null;
+            groupBox3.Visible = false;
             algorithmEdges.Clear();
             algorithmNodes.Clear();
             panel1.Refresh();
@@ -431,6 +445,8 @@ namespace MinimalSpanningTree
         private void mstButton_Click(object sender, EventArgs e)
         {
             if (graph == null) return;
+            editedEdge = null;
+            groupBox3.Visible = false;
             graph.Connected = false;
             algorithmNodes.Clear();
             algorithmNodes.Add(0);
@@ -498,6 +514,8 @@ namespace MinimalSpanningTree
         {
             graph = null;
             selectedChange = null;
+            editedEdge = null;
+            groupBox3.Visible = false;
             panel1.Refresh();
         }
 
@@ -508,6 +526,54 @@ namespace MinimalSpanningTree
             panel1.Refresh();
         }
 
+        private void panel1_DoubleClick(object sender, EventArgs e)
+        {
+            MouseEventArgs mouse = (MouseEventArgs) e;
+            if (graph == null || mouse.Button != MouseButtons.Left) return;
+            int x = mouse.X;
+            int y = mouse.Y;
+            int[,] pos = graph.CoPoints;
 
+            foreach(Edge ed in graph.Edges)
+            {
+                int l1 = ed.NodeOne;
+                int l2 = ed.NodeTwo;
+
+                double distance = Math.Abs((pos[l2,0] - pos[l1,0]) * (pos[l1, 1] - y) - (pos[l1, 0] -x) 
+                    * (pos[l2, 1] - pos[l1, 1])) / Math.Sqrt(Math.Pow(pos[l2, 0] - pos[l1, 0], 2) 
+                    + Math.Pow(pos[l2, 1] - pos[l1, 1], 2));
+
+                if(distance <5)
+                {
+                    groupBox3.Visible = true;
+                    textBox2.Text = ed.Cost.ToString();
+                    editedEdge = ed;
+                    panel1.Refresh();
+                    break;
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String text = textBox2.Text;
+
+            try
+            {
+                int newCost = Int32.Parse(text);
+                if(newCost>0 && newCost <= 20)
+                {
+                    editedEdge.Cost = newCost;
+                }
+            }
+            catch
+            {
+
+            }
+
+            editedEdge = null;
+            groupBox3.Visible = false;
+            panel1.Refresh();
+        }
     }
 }
