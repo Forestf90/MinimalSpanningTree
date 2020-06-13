@@ -111,6 +111,13 @@ namespace MinimalSpanningTree
             }
 
             Nodes = temp;
+            Edges.RemoveAll(e => e.NodeOne == removeIndex || e.NodeTwo == removeIndex);
+            foreach(Edge e in Edges)
+            {
+                if (e.NodeOne > removeIndex) e.NodeOne--;
+                if (e.NodeTwo > removeIndex) e.NodeTwo--;
+            }
+
 
             CalculatedDeg();
         }
