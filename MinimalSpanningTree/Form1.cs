@@ -366,7 +366,6 @@ namespace MinimalSpanningTree
                         graph.Nodes[i, selChangeInt] = !graph.Nodes[i, selChangeInt];
                         selectedChange = null;
                         panel1.Refresh();
-                        graph.CalculatedDeg();
                         return;
                     }
                     else

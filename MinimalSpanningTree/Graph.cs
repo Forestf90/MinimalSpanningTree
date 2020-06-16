@@ -7,7 +7,6 @@ namespace MinimalSpanningTree
     {
         public bool[,] Nodes;
         public int N;
-        //public int[] Deg;
         public bool Connected = false;
         public int[,] CoPoints;
         public List<Edge> Edges = new List<Edge>();
@@ -48,25 +47,8 @@ namespace MinimalSpanningTree
 
             }
 
-            CalculatedDeg();
         }
 
-
-        public void CalculatedDeg()
-        {
-            //Deg = new int[N];
-
-            //for (int i = 0; i < N; i++)
-            //{
-            //    int sum = 0;
-
-            //    for (int j = 0; j < N; j++)
-            //    {
-            //        sum += Convert.ToInt32(Nodes[i, j]);
-            //    }
-            //    Deg[i] = sum;
-            //}
-        }
 
         public void AddNode()
         {
@@ -87,7 +69,6 @@ namespace MinimalSpanningTree
                 temp[i, N - 1] = false;
             }
             Nodes = temp;
-            CalculatedDeg();
 
         }
 
@@ -118,8 +99,6 @@ namespace MinimalSpanningTree
                 if (e.NodeTwo > removeIndex) e.NodeTwo--;
             }
 
-
-            CalculatedDeg();
         }
 
         public void RandomCoordinate(int width, int height)
