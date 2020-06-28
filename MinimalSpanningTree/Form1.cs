@@ -28,10 +28,12 @@ namespace MinimalSpanningTree
         int? selectedChange;
         List<Edge> algorithmEdges;
         List<int> algorithmNodes;
+        List<Edge> mstEdges;
+
         bool drawAnimation;
         Bitmap b1;
         int nodesNumber;
-
+        int step = 0;
         Edge editedEdge;
 
         bool drawGrid;
@@ -45,6 +47,7 @@ namespace MinimalSpanningTree
 
             algorithmEdges = new List<Edge>();
             algorithmNodes = new List<int>();
+            mstEdges = new List<Edge>();
 
             b1 = new Bitmap(panel1.Width, panel1.Height);
             b1.SetResolution(97, 97);
@@ -212,7 +215,6 @@ namespace MinimalSpanningTree
             selectedChange = null;
             algorithmEdges.Clear();
             panel1.Refresh();
-            //textBox1.Text = "";
 
 
         }
@@ -231,7 +233,7 @@ namespace MinimalSpanningTree
             if (graph == null) return;
             else if (e.Button != MouseButtons.Left) return;
             else if (!panel1.Bounds.Contains(e.X + panel1.Left, e.Y + panel1.Top)) return;
-            //time.Start();
+
 
             int mx = e.X;
             int my = e.Y;
@@ -446,6 +448,73 @@ namespace MinimalSpanningTree
        
         private void mstButton_Click(object sender, EventArgs e)
         {
+            //if (graph == null) return;
+            //editedEdge = null;
+            //groupBox3.Visible = false;
+            //graph.Connected = false;
+            //algorithmNodes.Clear();
+            //algorithmNodes.Add(0);
+            //algorithmEdges.Clear();
+            //drawAnimation = false;
+            //checkConectivity(0);
+            //algorithmEdges.Clear();
+            //algorithmNodes.Clear();
+
+            //if (!graph.Connected)
+            //{
+            //    MessageBox.Show("Graph is not connected ");
+            //    return;
+            //}
+
+            //selectedChange = null;
+            //panel1.Refresh();
+
+            //mstEdges = new List<Edge>();
+            //List<Edge> clonedEdges = graph.Edges.OrderBy(edge => edge.Cost).ToList();
+            //DisjointSet ds = new DisjointSet(graph.N);
+            //ds.MakeSet(graph.N);
+
+            //int index = 0;
+
+            //while (mstEdges.Count != graph.N - 1)
+            //{
+            //    Edge next = clonedEdges[index++];
+
+
+            //    int x = ds.Find(next.NodeOne);
+            //    int y = ds.Find(next.NodeTwo);
+
+
+            //    if (x != y)
+            //    {
+            //        mstEdges.Add(next);
+            //        ds.Union(x, y);
+            //    }
+            //}
+
+            FindMST();
+            if (mstEdges.Count == 0) return;
+            drawAnimation = true;
+            String massage = "Minimal spanning tree edges:" + Environment.NewLine;
+            double totalCost = 0;
+            foreach (Edge edg in mstEdges)
+            {
+                algorithmEdges.Add(edg);
+                panel1.Refresh();
+                System.Threading.Thread.Sleep(500);
+                massage += edg.GetString() + Environment.NewLine;
+                totalCost += edg.Cost;
+            }
+            massage += "Total cost: " + totalCost;
+            drawAnimation = false;
+
+            MessageBox.Show(massage, "Spanning Tree");
+            algorithmEdges.Clear();
+            algorithmNodes.Clear();
+        }
+
+        private void FindMST()
+        {
             if (graph == null) return;
             editedEdge = null;
             groupBox3.Visible = false;
@@ -467,7 +536,7 @@ namespace MinimalSpanningTree
             selectedChange = null;
             panel1.Refresh();
 
-            List<Edge> mstEdges = new List<Edge>();
+            mstEdges = new List<Edge>();
             List<Edge> clonedEdges = graph.Edges.OrderBy(edge => edge.Cost).ToList();
             DisjointSet ds = new DisjointSet(graph.N);
             ds.MakeSet(graph.N);
@@ -482,7 +551,7 @@ namespace MinimalSpanningTree
                 int x = ds.Find(next.NodeOne);
                 int y = ds.Find(next.NodeTwo);
 
- 
+
                 if (x != y)
                 {
                     mstEdges.Add(next);
@@ -490,26 +559,7 @@ namespace MinimalSpanningTree
                 }
             }
 
-
-            drawAnimation = true;
-            String massage = "Minimal spanning tree edges:" + Environment.NewLine;
-            double totalCost = 0;
-            foreach (Edge edg in mstEdges)
-            {
-                algorithmEdges.Add(edg);
-                panel1.Refresh();
-                System.Threading.Thread.Sleep(500);
-                massage += edg.GetString() + Environment.NewLine;
-                totalCost += edg.Cost;
-            }
-            massage += "Total cost: " + totalCost;
-            drawAnimation = false;
-
-            MessageBox.Show(massage, "Spanning Tree");
-            algorithmEdges.Clear();
-            algorithmNodes.Clear();
         }
-
 
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -599,6 +649,47 @@ namespace MinimalSpanningTree
 
             panelSize.Width = panel1.Width;
             panelSize.Height = panel1.Height;
+            panel1.Refresh();
+        }
+
+        private void buttonNext_Click(object sender, EventArgs e)
+        {
+            if (mstEdges.Count == 0) FindMST();
+            if (mstEdges.Count == 0) return;
+            step++;
+
+            drawAnimation = true;
+            string massage = "Minimal spanning tree edges:" + Environment.NewLine;
+            double totalCost = 0;
+            int i = 0;
+            algorithmEdges.Clear();
+            foreach (Edge edg in mstEdges)
+            {
+                i++;
+                algorithmEdges.Add(edg);
+                panel1.Refresh();
+                //System.Threading.Thread.Sleep(500);
+                massage += edg.GetString() + Environment.NewLine;
+                totalCost += edg.Cost;
+                if (i == step) return;
+            }
+            massage += "Total cost: " + totalCost;
+            drawAnimation = false;
+            step = 0;
+            MessageBox.Show(massage, "Spanning Tree");
+            algorithmEdges.Clear();
+            algorithmNodes.Clear();
+
+        }
+
+        private void buttonPrev_Click(object sender, EventArgs e)
+        {
+            if (mstEdges.Count == 0) FindMST();
+            if (mstEdges.Count == 0) return;
+            if(step <=0)return;
+            step--;
+
+            algorithmEdges.RemoveAt(algorithmEdges.Count-1);
             panel1.Refresh();
         }
     }

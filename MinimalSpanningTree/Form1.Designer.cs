@@ -75,7 +75,7 @@
             this.panel1.BackColor = System.Drawing.SystemColors.Window;
             this.panel1.Location = new System.Drawing.Point(407, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(369, 400);
+            this.panel1.Size = new System.Drawing.Size(369, 405);
             this.panel1.TabIndex = 0;
             this.panel1.SizeChanged += new System.EventHandler(this.panel1_SizeChanged);
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
@@ -180,11 +180,11 @@
             // mstButton
             // 
             this.mstButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mstButton.Location = new System.Drawing.Point(30, 439);
+            this.mstButton.Location = new System.Drawing.Point(111, 443);
             this.mstButton.Name = "mstButton";
-            this.mstButton.Size = new System.Drawing.Size(303, 28);
+            this.mstButton.Size = new System.Drawing.Size(142, 28);
             this.mstButton.TabIndex = 12;
-            this.mstButton.Text = "Search MST";
+            this.mstButton.Text = "MST Animation";
             this.mstButton.UseVisualStyleBackColor = true;
             this.mstButton.Click += new System.EventHandler(this.mstButton_Click);
             // 
@@ -192,7 +192,7 @@
             // 
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(729, 418);
+            this.clearButton.Location = new System.Drawing.Point(729, 423);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(47, 20);
             this.clearButton.TabIndex = 14;
@@ -205,7 +205,7 @@
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(407, 418);
+            this.checkBox1.Location = new System.Drawing.Point(407, 423);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(49, 17);
             this.checkBox1.TabIndex = 15;
@@ -362,34 +362,32 @@
             // 
             // buttonNext
             // 
-            this.buttonNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNext.Enabled = false;
             this.buttonNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNext.Location = new System.Drawing.Point(702, 441);
+            this.buttonNext.Location = new System.Drawing.Point(259, 443);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(74, 28);
             this.buttonNext.TabIndex = 22;
             this.buttonNext.Text = "Next Step";
             this.buttonNext.UseVisualStyleBackColor = true;
+            this.buttonNext.Click += new System.EventHandler(this.buttonNext_Click);
             // 
             // buttonPrev
             // 
-            this.buttonPrev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonPrev.Enabled = false;
             this.buttonPrev.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonPrev.Location = new System.Drawing.Point(407, 441);
+            this.buttonPrev.Location = new System.Drawing.Point(30, 443);
             this.buttonPrev.Name = "buttonPrev";
             this.buttonPrev.Size = new System.Drawing.Size(73, 28);
             this.buttonPrev.TabIndex = 23;
             this.buttonPrev.Text = "Prev step";
             this.buttonPrev.UseVisualStyleBackColor = true;
+            this.buttonPrev.Click += new System.EventHandler(this.buttonPrev_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(799, 481);
+            this.ClientSize = new System.Drawing.Size(799, 486);
             this.Controls.Add(this.buttonPrev);
             this.Controls.Add(this.buttonNext);
             this.Controls.Add(this.radioConnected);
@@ -408,7 +406,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(815, 517);
+            this.MinimumSize = new System.Drawing.Size(815, 515);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MST 2020 Edition";

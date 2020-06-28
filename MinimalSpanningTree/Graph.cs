@@ -18,8 +18,6 @@ namespace MinimalSpanningTree
             if (conn)
             {
                 CreateConnected();
-                //minEdg -= Edges.Count;
-                //maxEdg -= Edges.Count;
             }
             CreateConnections(p, minEdg, maxEdg);
         }
