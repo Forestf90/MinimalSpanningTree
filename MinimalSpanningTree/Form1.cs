@@ -36,6 +36,9 @@ namespace MinimalSpanningTree
 
         bool drawGrid;
         static int gridCellWidth;
+        static int gridCellHeight;
+
+        Size panelSize;
         public Form1()
         {
             InitializeComponent();
@@ -60,7 +63,9 @@ namespace MinimalSpanningTree
             g.InterpolationMode = InterpolationMode.High;
 
             gridCellWidth = panel1.Width / 10;
-
+            gridCellHeight = panel1.Height / 10;
+            panelSize.Width = panel1.Width;
+            panelSize.Height = panel1.Height;
 
         }
        
@@ -78,13 +83,15 @@ namespace MinimalSpanningTree
         }
         public void drawBitmap()
         {
-
+            //b1 = new Bitmap(panel1.Width, panel1.Height);
+            //b1.SetResolution(97, 97);
+            //g = Graphics.FromImage(b1);
             g.Clear(Color.White);
             if (drawGrid)
             {
                 for (int i = 1; i < 10; i++)
                 {
-                    g.DrawLine(pGrey, 0, i * gridCellWidth, panel1.Width, i * gridCellWidth);
+                    g.DrawLine(pGrey, 0, i * gridCellHeight, panel1.Width, i * gridCellHeight);
                     g.DrawLine(pGrey, i * gridCellWidth, 0, i * gridCellWidth, panel1.Height);
                 }
 
@@ -168,48 +175,44 @@ namespace MinimalSpanningTree
                 textBox1.Text = "";
                 return;
             }
-
-            graph = new Graph(nodesNumber, propability);
-            int i = 0;
-
-            using (GenerateForm gen = new GenerateForm())
+            int minEdge = Convert.ToInt32(numericMin.Value);
+            int maxEdge = Convert.ToInt32(numericMax.Value);
+            bool connected = radioConnected.Checked;
+            if(minEdge > maxEdge)
             {
-                if (gen.ShowDialog() == DialogResult.OK)
-                {
-                    i = gen.k;
-                }
-                else if (gen.DialogResult == DialogResult.Cancel)
+                MessageBox.Show("Min edges bigger that max edges");
+                return;
+            }
+
+            graph = new Graph(nodesNumber, propability, minEdge, maxEdge, connected);
+
+            
+            graph.CoPoints = null;
+
+            if(radioCircle.Checked)
+            {
+                graph.CircleCoordinate(panel1.Width, panel1.Height);
+            }
+            else if( radioRandom.Checked)
+            {
+                graph.RandomCoordinate(panel1.Width, panel1.Height);
+            }
+            else
+            {
+                if (graph.N > 80)
                 {
                     graph = null;
+                    MessageBox.Show("Enter node size less that 80");
                     return;
                 }
-            }
-            graph.CoPoints = null;
-            switch (i)
-            {
-                case 0:
-                    graph.RandomCoordinate(panel1.Width, panel1.Height);
-                    break;
-
-                case 1:
-                    graph.CircleCoordinate(panel1.Width, panel1.Height);
-                    break;
-                case 2:
-                    if (graph.N > 80)
-                    {
-                        graph = null;
-                        MessageBox.Show("Enter node size less that 80");
-                        return;
-                    }
-                    else graph.GridCoordinate(panel1.Width);
-                    break;
+                else graph.GridCoordinate(panel1.Width, panel1.Height);
 
             }
 
             selectedChange = null;
             algorithmEdges.Clear();
             panel1.Refresh();
-            textBox1.Text = "";
+            //textBox1.Text = "";
 
 
         }
@@ -276,7 +279,7 @@ namespace MinimalSpanningTree
                 selectedChange = null;
                 if (graph == null)
                 {
-                    graph = new Graph(1, 0);
+                    graph = new Graph(1, 0, 0, 0, false);
                     graph.CoPoints = new int[1, 2];
                     graph.CoPoints[0, 0] = e.X;
                     graph.CoPoints[0, 1] = e.Y;
@@ -572,6 +575,30 @@ namespace MinimalSpanningTree
 
             editedEdge = null;
             groupBox3.Visible = false;
+            panel1.Refresh();
+        }
+
+        private void panel1_SizeChanged(object sender, EventArgs e)
+        {
+
+            gridCellWidth = panel1.Width / 10;
+            gridCellHeight = panel1.Height / 10;
+
+            if (graph != null)
+            {
+                double w = (double)panel1.Width / (double)panelSize.Width;
+                double h = (double)panel1.Height / (double)panelSize.Height;
+
+                graph.ResizeGraph(w, h);
+            }
+           
+
+            b1 = new Bitmap(panel1.Width, panel1.Height);
+            b1.SetResolution(97, 97);
+            g = Graphics.FromImage(b1);
+
+            panelSize.Width = panel1.Width;
+            panelSize.Height = panel1.Height;
             panel1.Refresh();
         }
     }

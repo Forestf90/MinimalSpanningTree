@@ -11,30 +11,54 @@ namespace MinimalSpanningTree
         public int[,] CoPoints;
         public List<Edge> Edges = new List<Edge>();
 
-        public Graph(int n, int p)
+        public Graph(int n, int p, int minEdg, int maxEdg, bool conn)
         {
             N = n;
             Nodes = new bool[N, N];
-            CreateConnections(p);
+            if (conn)
+            {
+                CreateConnected();
+                //minEdg -= Edges.Count;
+                //maxEdg -= Edges.Count;
+            }
+            CreateConnections(p, minEdg, maxEdg);
         }
 
-        private void CreateConnections(int p)
+        private void CreateConnections(int p, int minEdg, int maxEdg)
         {
             Random rnd = new Random();
 
+            List<int> nodesIndex = new List<int>();
+            List<int> nodesIndex2 = new List<int>();
             for (int i = 0; i < N; i++)
             {
-                for (int j = 0; j < i; j++)
+                nodesIndex.Add(i);
+                nodesIndex2.Add(i);
+
+            }
+            nodesIndex.Sort((a, b) => rnd.Next(-1, 1));
+            nodesIndex2.Sort((a, b) => rnd.Next(-1, 1));
+
+
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < N; j++)
                 {
+                    if (Nodes[nodesIndex[i], nodesIndex2[j]] || Nodes[nodesIndex2[j], nodesIndex[i]] 
+                        || nodesIndex[i] == nodesIndex2[j]) continue;
+                    if (Edges.Count >= maxEdg) break;
                     int a = rnd.Next(100);
-                    if (a > 0 && a < p)
+
+                    if (a > 0 && a < p || Edges.Count < minEdg)
                     {
-                        Nodes[i, j] = true;
-                        double cost = rnd.Next(1,20);
-                        Edges.Add(new Edge(i, j, cost));
+                        Nodes[nodesIndex[i], nodesIndex2[j]] = true;
+                        Nodes[nodesIndex2[j], nodesIndex[i]] = true;
+                        double cost = rnd.Next(1, 20);
+                        Edges.Add(new Edge(nodesIndex[i], nodesIndex2[j], cost));
                     }
-                    else Nodes[i, j] = false;
+
                 }
+                if (Edges.Count >= maxEdg) break;
 
             }
 
@@ -42,13 +66,49 @@ namespace MinimalSpanningTree
             {
                 for (int j = i; j < N; j++)
                 {
-                    Nodes[i, j] = Nodes[j, i];
-                }
+                    if(Nodes[i,j] != true) Nodes[i, j] = false;
 
+                }
             }
 
         }
 
+        private void CreateConnected()
+        {
+            if (N <= 1) return;
+            List<int> nodesIndex = new List<int>();
+ 
+            for (int i=0; i<N; i++)
+            {
+                nodesIndex.Add(i);
+            }
+            
+            var random = new Random();
+            if (nodesIndex.Count % 2 == 1) nodesIndex.Add(random.Next(nodesIndex.Count));
+            nodesIndex.Sort((a, b) => random.Next(-1, 1));
+
+            while (nodesIndex.Count > 1)
+            {
+                nodesIndex = ConnectedRec(nodesIndex);
+            }
+
+        }
+
+        private List<int> ConnectedRec(List<int> nodesIndex)
+        {
+            List<int> temp = new List<int>();
+            Random rnd = new Random();
+            if (nodesIndex.Count % 2 == 1) nodesIndex.Add(rnd.Next(N));
+            for (int i = 0; i < nodesIndex.Count-1; i += 2)
+            {
+                Nodes[nodesIndex[i], nodesIndex[i + 1]] = true;
+                Nodes[nodesIndex[i + 1], nodesIndex[i]] = true;
+                temp.Add(nodesIndex[i]);
+                double cost = rnd.Next(1, 20);
+                Edges.Add(new Edge(nodesIndex[i], nodesIndex[i+1], cost));
+            }
+            return temp;
+        }
 
         public void AddNode()
         {
@@ -143,7 +203,7 @@ namespace MinimalSpanningTree
             }
         }
 
-        public void GridCoordinate(int width)
+        public void GridCoordinate(int width, int height)
         {
 
 
@@ -156,7 +216,7 @@ namespace MinimalSpanningTree
                 int y = rnd.Next(1, 10);
                 bool was = false;
                 x = x * (width / 10) - 5;
-                y = y * (width / 10) - 5;
+                y = y * (height / 10) - 5;
                 for (int j = 0; j < i; j++)
                 {
 
@@ -178,6 +238,16 @@ namespace MinimalSpanningTree
             }
 
         }
+
+        public void ResizeGraph(double width, double height)
+        {
+            for(int i=0; i<N; i++)
+            {
+                CoPoints[i, 0] = Convert.ToInt32(width * CoPoints[i, 0]);
+                CoPoints[i, 1] = Convert.ToInt32(height * CoPoints[i, 1]);
+            }
+        }
+
     }
 
 }
