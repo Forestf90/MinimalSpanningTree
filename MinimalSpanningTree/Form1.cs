@@ -349,6 +349,7 @@ namespace MinimalSpanningTree
                     if (selectedChange != null)
                     {
                         int selChangeInt = Convert.ToInt32(selectedChange);
+                        if (selChangeInt == i) return;
                         if (graph.Nodes[selChangeInt, i])
                         {
                             Edge toRemove = null;
@@ -448,50 +449,7 @@ namespace MinimalSpanningTree
        
         private void mstButton_Click(object sender, EventArgs e)
         {
-            //if (graph == null) return;
-            //editedEdge = null;
-            //groupBox3.Visible = false;
-            //graph.Connected = false;
-            //algorithmNodes.Clear();
-            //algorithmNodes.Add(0);
-            //algorithmEdges.Clear();
-            //drawAnimation = false;
-            //checkConectivity(0);
-            //algorithmEdges.Clear();
-            //algorithmNodes.Clear();
-
-            //if (!graph.Connected)
-            //{
-            //    MessageBox.Show("Graph is not connected ");
-            //    return;
-            //}
-
-            //selectedChange = null;
-            //panel1.Refresh();
-
-            //mstEdges = new List<Edge>();
-            //List<Edge> clonedEdges = graph.Edges.OrderBy(edge => edge.Cost).ToList();
-            //DisjointSet ds = new DisjointSet(graph.N);
-            //ds.MakeSet(graph.N);
-
-            //int index = 0;
-
-            //while (mstEdges.Count != graph.N - 1)
-            //{
-            //    Edge next = clonedEdges[index++];
-
-
-            //    int x = ds.Find(next.NodeOne);
-            //    int y = ds.Find(next.NodeTwo);
-
-
-            //    if (x != y)
-            //    {
-            //        mstEdges.Add(next);
-            //        ds.Union(x, y);
-            //    }
-            //}
-
+ 
             FindMST();
             if (mstEdges.Count == 0) return;
             drawAnimation = true;
