@@ -8,6 +8,7 @@ namespace MinimalSpanningTree
         public bool[,] Nodes;
         public int N;
         public bool Connected = false;
+        public int[] Deg;
         public int[,] CoPoints;
         public List<Edge> Edges = new List<Edge>();
 
@@ -22,10 +23,47 @@ namespace MinimalSpanningTree
             CreateConnections(p, minEdg, maxEdg);
         }
 
-        private void CreateConnections(int p, int minEdg, int maxEdg)
+        public Graph(int n, int p)
+        {
+            N = n;
+            Nodes = new bool[N, N];
+            CreateConnectionsProb(p);
+        }
+
+        private void CreateConnectionsProb(int p)
         {
             Random rnd = new Random();
 
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    int a = rnd.Next(100);
+                    if (a > 0 && a < p)
+                    {
+                        Nodes[i, j] = true;
+                        double cost = rnd.Next(1, 20);
+                        Edges.Add(new Edge(i, j, cost));
+                    }
+                    else Nodes[i, j] = false;
+                }
+
+            }
+
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = i; j < N; j++)
+                {
+                    Nodes[i, j] = Nodes[j, i];
+                }
+
+            }
+
+        }
+        private void CreateConnections(int p, int minEdg, int maxEdg)
+        {
+            Random rnd = new Random();
+            CalculatedDeg();
             List<int> nodesIndex = new List<int>();
             List<int> nodesIndex2 = new List<int>();
             for (int i = 0; i < N; i++)
@@ -37,58 +75,82 @@ namespace MinimalSpanningTree
             nodesIndex.Sort((a, b) => rnd.Next(-1, 1));
             nodesIndex2.Sort((a, b) => rnd.Next(-1, 1));
 
-
-            for (int i = 0; i < N; i++)
+            for(int i=0; i<nodesIndex.Count; i++)
             {
-                for (int j = 0; j < N; j++)
-                {
-                    if (Nodes[nodesIndex[i], nodesIndex2[j]] || Nodes[nodesIndex2[j], nodesIndex[i]] 
-                        || nodesIndex[i] == nodesIndex2[j]) continue;
-                    if (Edges.Count >= maxEdg) break;
-                    int a = rnd.Next(100);
+                int prev = nodesIndex[i];
+                if (Deg[prev] >= minEdg) continue;
 
-                    if (a > 0 && a < p || Edges.Count < minEdg)
+                for (int j = 0; j < nodesIndex.Count; j++)
+                {
+                    int curr = nodesIndex2[j];
+                    if (prev == curr) continue;
+                    else if (Deg[prev] >= minEdg) break;
+                    else if (Deg[curr] < maxEdg)
                     {
-                        Nodes[nodesIndex[i], nodesIndex2[j]] = true;
-                        Nodes[nodesIndex2[j], nodesIndex[i]] = true;
+                        Nodes[prev, curr] = true;
+                        Nodes[curr, prev] = true;
                         double cost = rnd.Next(1, 20);
-                        Edges.Add(new Edge(nodesIndex[i], nodesIndex2[j], cost));
+                        Edges.Add(new Edge(prev, curr, cost));
+                        CalculatedDeg();
                     }
-
                 }
-                if (Edges.Count >= maxEdg) break;
-
-            }
-
-            for (int i = 0; i < N; i++)
-            {
-                for (int j = i; j < N; j++)
-                {
-                    if(Nodes[i,j] != true) Nodes[i, j] = false;
-
-                }
-            }
+       
+                
+            }         
 
         }
+        public void CalculatedDeg()
+        {
+            Deg = new int[N];
 
+            for (int i = 0; i < N; i++)
+            {
+                int sum = 0;
+
+                for (int j = 0; j < N; j++)
+                {
+                    sum += Convert.ToInt32(Nodes[i, j]);
+                }
+                Deg[i] = sum;
+            }
+        }
         private void CreateConnected()
         {
-            if (N <= 1) return;
+
+            Random rnd = new Random();
+
             List<int> nodesIndex = new List<int>();
- 
-            for (int i=0; i<N; i++)
+            for (int i = 0; i < N; i++)
             {
                 nodesIndex.Add(i);
             }
-            
-            var random = new Random();
-            if (nodesIndex.Count % 2 == 1) nodesIndex.Add(random.Next(nodesIndex.Count));
-            nodesIndex.Sort((a, b) => random.Next(-1, 1));
+            nodesIndex.Sort((a, b) => rnd.Next(-1, 1));
 
-            while (nodesIndex.Count > 1)
+            int prev = nodesIndex[0];
+            for(int i=1; i<nodesIndex.Count; i++)
             {
-                nodesIndex = ConnectedRec(nodesIndex);
+                Nodes[prev, nodesIndex[i]] = true;
+                Nodes[nodesIndex[i], prev] = true;
+                double cost = rnd.Next(1, 20);
+                Edges.Add(new Edge(prev, nodesIndex[i], cost));
+                prev = nodesIndex[i];
             }
+            //if (N <= 1) return;
+            //List<int> nodesIndex = new List<int>();
+
+            //for (int i=0; i<N; i++)
+            //{
+            //    nodesIndex.Add(i);
+            //}
+
+            //var random = new Random();
+            //if (nodesIndex.Count % 2 == 1) nodesIndex.Add(random.Next(nodesIndex.Count));
+            //nodesIndex.Sort((a, b) => random.Next(-1, 1));
+
+            //while (nodesIndex.Count > 1)
+            //{
+            //    nodesIndex = ConnectedRec(nodesIndex);
+            //}
 
         }
 

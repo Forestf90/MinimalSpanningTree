@@ -86,9 +86,7 @@ namespace MinimalSpanningTree
         }
         public void drawBitmap()
         {
-            //b1 = new Bitmap(panel1.Width, panel1.Height);
-            //b1.SetResolution(97, 97);
-            //g = Graphics.FromImage(b1);
+           
             g.Clear(Color.White);
             if (drawGrid)
             {
@@ -178,16 +176,24 @@ namespace MinimalSpanningTree
                 textBox1.Text = "";
                 return;
             }
-            int minEdge = Convert.ToInt32(numericMin.Value);
-            int maxEdge = Convert.ToInt32(numericMax.Value);
-            bool connected = radioConnected.Checked;
-            if(minEdge > maxEdge)
+
+            if (radioPropability.Checked)
             {
-                MessageBox.Show("Min edges bigger that max edges");
-                return;
+                graph = new Graph(nodesNumber, propability);
+            }
+            else
+            {
+                int minEdge = Convert.ToInt32(numericMin.Value);
+                int maxEdge = Convert.ToInt32(numericMax.Value);
+                bool connected = checkCon.Checked;
+                if (minEdge > maxEdge)
+                {
+                    MessageBox.Show("Min edges bigger that max edges");
+                    return;
+                }
+                graph = new Graph(nodesNumber, propability, minEdge, maxEdge, connected);
             }
 
-            graph = new Graph(nodesNumber, propability, minEdge, maxEdge, connected);
 
             
             graph.CoPoints = null;
@@ -223,7 +229,7 @@ namespace MinimalSpanningTree
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            label3.Text = Convert.ToString(trackBar1.Value);
+            label3.Text = Convert.ToString(trackBar1.Value)+"%";
         }
 
 
@@ -649,6 +655,46 @@ namespace MinimalSpanningTree
 
             algorithmEdges.RemoveAt(algorithmEdges.Count-1);
             panel1.Refresh();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                numericMax.Maximum = n - 1;
+                numericMin.Maximum = n - 1;
+                numericMax.Value = n - 1;
+
+                if (numericMin.Value >= n - 1) numericMin.Value = n - 1;
+                
+            }
+            catch (Exception exp)
+            {
+
+            }
+        }
+
+        private void radioPropability_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radioPropability.Checked)
+            {
+                trackBar1.Enabled = true;
+                numericMin.Enabled = false;
+                numericMax.Enabled = false;
+                checkCon.Enabled = false;
+            }
+        }
+
+        private void radioRange_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioRange.Checked)
+            {
+                trackBar1.Enabled = false;
+                numericMin.Enabled = true;
+                numericMax.Enabled = true;
+                checkCon.Enabled = true;
+            }
         }
     }
 }

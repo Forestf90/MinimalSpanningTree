@@ -36,7 +36,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.label2 = new System.Windows.Forms.Label();
             this.generateButton = new System.Windows.Forms.Button();
             this.conectivityButton = new System.Windows.Forms.Button();
             this.mstButton = new System.Windows.Forms.Button();
@@ -54,9 +53,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.numericMax = new System.Windows.Forms.NumericUpDown();
-            this.radioConnected = new System.Windows.Forms.RadioButton();
             this.buttonNext = new System.Windows.Forms.Button();
             this.buttonPrev = new System.Windows.Forms.Button();
+            this.checkCon = new System.Windows.Forms.CheckBox();
+            this.radioPropability = new System.Windows.Forms.RadioButton();
+            this.radioRange = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -75,7 +76,7 @@
             this.panel1.BackColor = System.Drawing.SystemColors.Window;
             this.panel1.Location = new System.Drawing.Point(407, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(369, 405);
+            this.panel1.Size = new System.Drawing.Size(369, 393);
             this.panel1.TabIndex = 0;
             this.panel1.SizeChanged += new System.EventHandler(this.panel1_SizeChanged);
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
@@ -100,6 +101,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(267, 20);
             this.textBox1.TabIndex = 1;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label1
             // 
@@ -113,9 +115,15 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.checkCon);
+            this.groupBox2.Controls.Add(this.radioRange);
+            this.groupBox2.Controls.Add(this.radioPropability);
             this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.numericMax);
             this.groupBox2.Controls.Add(this.trackBar1);
-            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.numericMin);
             this.groupBox2.Location = new System.Drawing.Point(30, 85);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(303, 111);
@@ -127,11 +135,11 @@
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.SystemColors.Window;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label3.Location = new System.Drawing.Point(143, 91);
+            this.label3.Location = new System.Drawing.Point(78, 91);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(24, 16);
+            this.label3.Size = new System.Drawing.Size(37, 16);
             this.label3.TabIndex = 3;
-            this.label3.Text = "50";
+            this.label3.Text = "50%";
             // 
             // trackBar1
             // 
@@ -139,26 +147,16 @@
             this.trackBar1.Location = new System.Drawing.Point(20, 43);
             this.trackBar1.Maximum = 100;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(266, 45);
+            this.trackBar1.Size = new System.Drawing.Size(147, 45);
             this.trackBar1.TabIndex = 2;
             this.trackBar1.TickFrequency = 10;
             this.trackBar1.Value = 50;
             this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label2.Location = new System.Drawing.Point(62, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(170, 16);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Select edge probability";
-            // 
             // generateButton
             // 
             this.generateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.generateButton.Location = new System.Drawing.Point(198, 308);
+            this.generateButton.Location = new System.Drawing.Point(203, 202);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(135, 23);
             this.generateButton.TabIndex = 3;
@@ -169,7 +167,7 @@
             // conectivityButton
             // 
             this.conectivityButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.conectivityButton.Location = new System.Drawing.Point(30, 308);
+            this.conectivityButton.Location = new System.Drawing.Point(203, 231);
             this.conectivityButton.Name = "conectivityButton";
             this.conectivityButton.Size = new System.Drawing.Size(135, 23);
             this.conectivityButton.TabIndex = 8;
@@ -180,7 +178,7 @@
             // mstButton
             // 
             this.mstButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mstButton.Location = new System.Drawing.Point(111, 443);
+            this.mstButton.Location = new System.Drawing.Point(111, 415);
             this.mstButton.Name = "mstButton";
             this.mstButton.Size = new System.Drawing.Size(142, 28);
             this.mstButton.TabIndex = 12;
@@ -192,7 +190,7 @@
             // 
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(729, 423);
+            this.clearButton.Location = new System.Drawing.Point(729, 411);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(47, 20);
             this.clearButton.TabIndex = 14;
@@ -205,7 +203,7 @@
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(407, 423);
+            this.checkBox1.Location = new System.Drawing.Point(407, 411);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(49, 17);
             this.checkBox1.TabIndex = 15;
@@ -218,7 +216,7 @@
             this.groupBox3.Controls.Add(this.button1);
             this.groupBox3.Controls.Add(this.textBox2);
             this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Location = new System.Drawing.Point(30, 337);
+            this.groupBox3.Location = new System.Drawing.Point(30, 308);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(303, 96);
             this.groupBox3.TabIndex = 16;
@@ -299,22 +297,33 @@
             // 
             // numericMin
             // 
-            this.numericMin.Location = new System.Drawing.Point(272, 213);
+            this.numericMin.Enabled = false;
+            this.numericMin.Location = new System.Drawing.Point(253, 36);
             this.numericMin.Margin = new System.Windows.Forms.Padding(2);
             this.numericMin.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
+            this.numericMin.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericMin.Name = "numericMin";
             this.numericMin.Size = new System.Drawing.Size(45, 20);
             this.numericMin.TabIndex = 18;
+            this.numericMin.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label5.Location = new System.Drawing.Point(198, 213);
+            this.label5.Location = new System.Drawing.Point(173, 43);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(69, 13);
             this.label5.TabIndex = 4;
@@ -324,7 +333,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label6.Location = new System.Drawing.Point(198, 239);
+            this.label6.Location = new System.Drawing.Point(173, 66);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(72, 13);
             this.label6.TabIndex = 19;
@@ -332,10 +341,16 @@
             // 
             // numericMax
             // 
-            this.numericMax.Location = new System.Drawing.Point(272, 237);
+            this.numericMax.Enabled = false;
+            this.numericMax.Location = new System.Drawing.Point(253, 64);
             this.numericMax.Margin = new System.Windows.Forms.Padding(2);
             this.numericMax.Maximum = new decimal(new int[] {
             1000,
+            0,
+            0,
+            0});
+            this.numericMax.Minimum = new decimal(new int[] {
+            2,
             0,
             0,
             0});
@@ -344,26 +359,15 @@
             this.numericMax.TabIndex = 20;
             this.numericMax.Tag = "";
             this.numericMax.Value = new decimal(new int[] {
-            100,
+            12,
             0,
             0,
             0});
             // 
-            // radioConnected
-            // 
-            this.radioConnected.AutoSize = true;
-            this.radioConnected.Location = new System.Drawing.Point(201, 262);
-            this.radioConnected.Name = "radioConnected";
-            this.radioConnected.Size = new System.Drawing.Size(106, 17);
-            this.radioConnected.TabIndex = 21;
-            this.radioConnected.TabStop = true;
-            this.radioConnected.Text = "Force conectivity";
-            this.radioConnected.UseVisualStyleBackColor = true;
-            // 
             // buttonNext
             // 
             this.buttonNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNext.Location = new System.Drawing.Point(259, 443);
+            this.buttonNext.Location = new System.Drawing.Point(259, 415);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(74, 28);
             this.buttonNext.TabIndex = 22;
@@ -374,7 +378,7 @@
             // buttonPrev
             // 
             this.buttonPrev.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonPrev.Location = new System.Drawing.Point(30, 443);
+            this.buttonPrev.Location = new System.Drawing.Point(30, 412);
             this.buttonPrev.Name = "buttonPrev";
             this.buttonPrev.Size = new System.Drawing.Size(73, 28);
             this.buttonPrev.TabIndex = 23;
@@ -382,19 +386,49 @@
             this.buttonPrev.UseVisualStyleBackColor = true;
             this.buttonPrev.Click += new System.EventHandler(this.buttonPrev_Click);
             // 
+            // checkCon
+            // 
+            this.checkCon.AutoSize = true;
+            this.checkCon.Enabled = false;
+            this.checkCon.Location = new System.Drawing.Point(176, 88);
+            this.checkCon.Name = "checkCon";
+            this.checkCon.Size = new System.Drawing.Size(107, 17);
+            this.checkCon.TabIndex = 24;
+            this.checkCon.Text = "Force conectivity";
+            this.checkCon.UseVisualStyleBackColor = true;
+            // 
+            // radioPropability
+            // 
+            this.radioPropability.AutoSize = true;
+            this.radioPropability.Checked = true;
+            this.radioPropability.Location = new System.Drawing.Point(20, 19);
+            this.radioPropability.Name = "radioPropability";
+            this.radioPropability.Size = new System.Drawing.Size(100, 17);
+            this.radioPropability.TabIndex = 4;
+            this.radioPropability.TabStop = true;
+            this.radioPropability.Text = "Edge propability";
+            this.radioPropability.UseVisualStyleBackColor = true;
+            this.radioPropability.CheckedChanged += new System.EventHandler(this.radioPropability_CheckedChanged);
+            // 
+            // radioRange
+            // 
+            this.radioRange.AutoSize = true;
+            this.radioRange.Location = new System.Drawing.Point(168, 19);
+            this.radioRange.Name = "radioRange";
+            this.radioRange.Size = new System.Drawing.Size(80, 17);
+            this.radioRange.TabIndex = 5;
+            this.radioRange.Text = "Edge range";
+            this.radioRange.UseVisualStyleBackColor = true;
+            this.radioRange.CheckedChanged += new System.EventHandler(this.radioRange_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(799, 486);
+            this.ClientSize = new System.Drawing.Size(799, 474);
             this.Controls.Add(this.buttonPrev);
             this.Controls.Add(this.buttonNext);
-            this.Controls.Add(this.radioConnected);
-            this.Controls.Add(this.numericMax);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.numericMin);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.checkBox1);
@@ -406,7 +440,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(815, 515);
+            this.MinimumSize = new System.Drawing.Size(815, 513);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MST 2020 Edition";
@@ -434,7 +468,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button generateButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button conectivityButton;
@@ -453,9 +486,11 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericMax;
-        private System.Windows.Forms.RadioButton radioConnected;
         private System.Windows.Forms.Button buttonNext;
         private System.Windows.Forms.Button buttonPrev;
+        private System.Windows.Forms.CheckBox checkCon;
+        private System.Windows.Forms.RadioButton radioRange;
+        private System.Windows.Forms.RadioButton radioPropability;
     }
 }
 
